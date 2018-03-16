@@ -10,13 +10,14 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
         version = EasierChests.VERSION,
 	clientSideOnly = true, 
 	guiFactory = "de.guntram.mcmod.easierchests.GuiFactory",
-	acceptedMinecraftVersions = "[1.12]"
+	acceptedMinecraftVersions = "[1.12]",
+        updateJSON = "https://raw.githubusercontent.com/gbl/EasierChests/master/versioncheck.json"
 )
 
 public class EasierChests
 {
     static final String MODID="easierchests";
-    static final String VERSION="1.0";
+    static final String VERSION="@VERSION@";
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
