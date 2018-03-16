@@ -20,13 +20,14 @@ public class EasierChests
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-        MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(OpenChestEventHandler.getInstance());
     }
 
     @EventHandler
     public void preInit(final FMLPreInitializationEvent event) {
         ConfigurationHandler confHandler = ConfigurationHandler.getInstance();
         confHandler.load(event.getSuggestedConfigurationFile());
+        FrozenSlotDatabase.init(event.getModConfigurationDirectory());
         MinecraftForge.EVENT_BUS.register(confHandler);
     }
 }
