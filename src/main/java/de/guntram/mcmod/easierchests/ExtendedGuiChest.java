@@ -236,14 +236,16 @@ public class ExtendedGuiChest extends GuiContainer
     private void moveMatchingItems(boolean isChest) {
         System.out.println("move matching from "+(isChest ? "chest" : "player"));
         IInventory from, to;
+        int fromSize, toSize;
+        // use 36 for player inventory size so we won't use armor/2h slots
         if (isChest) {
-            from=lowerChestInventory;
-            to  =upperChestInventory;
+            from=lowerChestInventory; fromSize=from.getSizeInventory();
+            to  =upperChestInventory; toSize  =36;
         } else {
-            from=upperChestInventory;
-            to  =lowerChestInventory;
+            from=upperChestInventory; fromSize=36;
+            to  =lowerChestInventory; toSize  =to.getSizeInventory();
         }
-        for (int i=0; i<from.getSizeInventory(); i++) {
+        for (int i=0; i<fromSize; i++) {
             if (!isChest && FrozenSlotDatabase.isSlotFrozen(i))
                 continue;
             ItemStack fromStack = from.getStackInSlot(i);
@@ -252,7 +254,7 @@ public class ExtendedGuiChest extends GuiContainer
                 slot=i;
             else
                 slot=slotIndexFromPlayerInventoryIndex(i);
-            for (int j=0; j<to.getSizeInventory(); j++) {
+            for (int j=0; j<toSize; j++) {
                 ItemStack toStack = to.getStackInSlot(j);
                 if (fromStack.isItemEqual(toStack)
                 &&  ItemStack.areItemStackTagsEqual(fromStack, toStack)) {
