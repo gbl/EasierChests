@@ -68,7 +68,7 @@ public class ExtendedGuiChest extends GuiContainer
         this.fontRenderer.drawString(this.upperChestInventory.getDisplayName().getUnformattedText(), 8, this.ySize - 96 + 2, 4210752);
     }
 
-    /**
+    /*
      * Draws the background layer of this container (behind the items).
      */
     @Override
@@ -101,7 +101,7 @@ public class ExtendedGuiChest extends GuiContainer
         this.drawTexturedModalRect(x+this.xSize+18, y+28+(this.inventoryRows)*18,   8 *18, 2*18, 18, 18);       // all up inventory
         
         for (int i=0; i<36; i++) {
-            if (FrozenSlotDatabase.isSlotFrozen(i)) {
+            if (!isShiftKeyDown() && FrozenSlotDatabase.isSlotFrozen(i)) {
                 Slot slot=this.inventorySlots.inventorySlots.get(slotIndexFromPlayerInventoryIndex(i));
                 this.drawTexturedModalRect(x+slot.xPos, y+slot.yPos, 7*18+1, 3*18+1, 16, 16);               // stop sign
             }
@@ -170,30 +170,29 @@ public class ExtendedGuiChest extends GuiContainer
     }
     
     private void clickSlotsInRow(int row) {
-        System.out.println("clicking slots in row "+row);
+        //System.out.println("clicking slots in row "+row);
         for (int slot=row*9; slot<=row*9+8; slot++)
-            if (!FrozenSlotDatabase.isSlotFrozen(playerInventoryIndexFromSlotIndex(slot)))
+            if (isShiftKeyDown() || !FrozenSlotDatabase.isSlotFrozen(playerInventoryIndexFromSlotIndex(slot)))
             slotClick(slot, 0, ClickType.QUICK_MOVE);
     }
 
     private void clickSlotsInColumn(int column, boolean isChest) {
-        System.out.println("clicking slots in column "+column+ " of "+(isChest ? "chest" : "player"));
+        //System.out.println("clicking slots in column "+column+ " of "+(isChest ? "chest" : "player"));
         int first=(isChest ? column : inventoryRows*9+column);
         int count=(isChest ? inventoryRows : 4);
         for (int i=0; i<count; i++) {
             int slot=first+i*9;
-            if (!FrozenSlotDatabase.isSlotFrozen(playerInventoryIndexFromSlotIndex(slot)))
+            if (isShiftKeyDown() || !FrozenSlotDatabase.isSlotFrozen(playerInventoryIndexFromSlotIndex(slot)))
                 slotClick(slot, 0, ClickType.QUICK_MOVE);
         }
     }
     
     private void sortInventory(boolean isChest) {
-        System.out.println("sorting "+(isChest ? "chest" : "player"));
+        //System.out.println("sorting "+(isChest ? "chest" : "player"));
         IInventory inv=(isChest ? lowerChestInventory : upperChestInventory);
         
         int size=isChest ? inv.getSizeInventory() : 36;     // player's Inventory has 41 items which includes armor and left hand, but we don't want these.
         for (int toSlot=0; toSlot<size; toSlot++) {
-            System.out.println("sorting: looking for item for slot "+toSlot);
             ItemStack targetStack=inv.getStackInSlot(toSlot);
             String targetItemName=inv.getStackInSlot(toSlot).getDisplayName();
             if (targetStack.getItem() == Items.AIR) {
@@ -201,9 +200,9 @@ public class ExtendedGuiChest extends GuiContainer
                     continue;                   // Don't move stuff into empty player hotbar slots
                 targetItemName="ZZZ";           // make sure it is highest so gets sorted last
             }
-            if (isChest || toSlot>=9 && !FrozenSlotDatabase.isSlotFrozen(toSlot)) {         // Search for a better item, but don't replace hotbar things with different stuff
+            if (isChest || toSlot>=9 && (isShiftKeyDown() || !FrozenSlotDatabase.isSlotFrozen(toSlot))) {         // Search for a better item, but don't replace hotbar things with different stuff
                 for (int fromSlot=toSlot+1; fromSlot<size; fromSlot++) {
-                    if (!isChest && FrozenSlotDatabase.isSlotFrozen(fromSlot))
+                    if (!isChest && !isShiftKeyDown() && FrozenSlotDatabase.isSlotFrozen(fromSlot))
                         continue;
                     ItemStack slotStack=inv.getStackInSlot(fromSlot);
                     if (slotStack.getItem()==Items.AIR)
@@ -213,18 +212,15 @@ public class ExtendedGuiChest extends GuiContainer
                         targetItemName=slotItem;
                 }
             }
-            System.out.println("sorting: decided on item "+targetItemName+" for slot "+toSlot);
             for (int fromSlot=toSlot+1; fromSlot<size; fromSlot++) {
-                if (!isChest && FrozenSlotDatabase.isSlotFrozen(fromSlot))
+                if (!isChest && isShiftKeyDown() && FrozenSlotDatabase.isSlotFrozen(fromSlot))
                     continue;
                 targetStack=inv.getStackInSlot(toSlot);
                 if (targetStack.getDisplayName().equals(targetItemName)         // @TODO mit Items arbeiten nicht mit Names
                 &&  targetStack.getCount() == targetStack.getMaxStackSize())
                     break;
                 ItemStack slotStack=inv.getStackInSlot(fromSlot);
-                System.out.println("sorting: slot "+fromSlot+" has "+slotStack.getDisplayName()+" and we want "+targetItemName);
                 if (slotStack.getDisplayName().equals(targetItemName)) {
-                    System.out.println("sorting: swapping slot "+fromSlot+" which has "+slotStack.getDisplayName()+" with target");
                     slotClick (isChest ? fromSlot : slotIndexFromPlayerInventoryIndex(fromSlot), 0, ClickType.PICKUP);
                     slotClick (isChest ? toSlot   : slotIndexFromPlayerInventoryIndex(toSlot)  , 0, ClickType.PICKUP);
                     slotClick (isChest ? fromSlot : slotIndexFromPlayerInventoryIndex(fromSlot), 0, ClickType.PICKUP);                    
@@ -234,7 +230,7 @@ public class ExtendedGuiChest extends GuiContainer
     }
     
     private void moveMatchingItems(boolean isChest) {
-        System.out.println("move matching from "+(isChest ? "chest" : "player"));
+        // System.out.println("move matching from "+(isChest ? "chest" : "player"));
         IInventory from, to;
         int fromSize, toSize;
         // use 36 for player inventory size so we won't use armor/2h slots
@@ -246,7 +242,7 @@ public class ExtendedGuiChest extends GuiContainer
             to  =lowerChestInventory; toSize  =to.getSizeInventory();
         }
         for (int i=0; i<fromSize; i++) {
-            if (!isChest && FrozenSlotDatabase.isSlotFrozen(i))
+            if (!isChest && !isShiftKeyDown() && FrozenSlotDatabase.isSlotFrozen(i))
                 continue;
             ItemStack fromStack = from.getStackInSlot(i);
             int slot;
@@ -258,7 +254,7 @@ public class ExtendedGuiChest extends GuiContainer
                 ItemStack toStack = to.getStackInSlot(j);
                 if (fromStack.isItemEqual(toStack)
                 &&  ItemStack.areItemStackTagsEqual(fromStack, toStack)) {
-                    System.out.println("  from["+i+"] is same as to["+j+"] ("+toStack.getDisplayName()+"), clicking "+slot);
+                    // System.out.println("  from["+i+"] is same as to["+j+"] ("+toStack.getDisplayName()+"), clicking "+slot);
                     slotClick(slot, 0, ClickType.QUICK_MOVE);
                 }
             }
@@ -266,7 +262,7 @@ public class ExtendedGuiChest extends GuiContainer
     }
     
     private void slotClick(int slot, int mouseButton, ClickType clickType) {
-        System.out.println("Clicking slot "+slot+" "+(mouseButton==0 ? "left" : "right")+" type:"+clickType.toString());
+        // System.out.println("Clicking slot "+slot+" "+(mouseButton==0 ? "left" : "right")+" type:"+clickType.toString());
         mc.playerController.windowClick(mc.player.openContainer.windowId, slot, mouseButton, clickType, mc.player);
     }
     
