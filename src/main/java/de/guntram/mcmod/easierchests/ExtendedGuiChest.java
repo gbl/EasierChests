@@ -78,36 +78,64 @@ public class ExtendedGuiChest extends GuiContainer
         this.mc.getTextureManager().bindTexture(CHEST_GUI_TEXTURE);
         int x = (this.width - this.xSize) / 2;
         int y = (this.height - this.ySize) / 2;
-        this.drawTexturedModalRect(x, y, 0, 0, this.xSize, this.inventoryRows * 18 + 17);
-        this.drawTexturedModalRect(x, y + this.inventoryRows * 18 + 17, 0, playerStartInTexture, this.xSize, 96);
+        this.drawTexturedModalRect(x, y, 0, 0, this.xSize, this.inventoryRows * 18 + 17);                       // upper chest gui
+        this.drawTexturedModalRect(x, y + this.inventoryRows * 18 + 17, 0, playerStartInTexture, this.xSize, 96);   // lower chest gui
         
+        GlStateManager.enableBlend();
+        // GlStateManager.blendFunc(1, 2);
+        GlStateManager.pushMatrix();
+        if (ConfigurationHandler.toneDownButtons())
+            GlStateManager.color(1.0f, 1.0F, 1.0F, 0.3F);
+        if (ConfigurationHandler.halfSizeButtons())
+            GlStateManager.scale(0.5f, 0.5f, 0.5f);
 
         this.mc.getTextureManager().bindTexture(ICONS);
         
         for (int i=0; i<9; i++) {
-            this.drawTexturedModalRect(x+7+i*18,    y+-18,                          1*18, 2*18, 18, 18);       // arrow down
-            this.drawTexturedModalRect(x+7+i*18,    y+40+(this.inventoryRows+4)*18, 9*18, 2*18, 18, 18);       // arrow up
+            this.drawTexturedModalRectWithMouseHighlight(x+7+i*18,    y+-18,                          1*18, 2*18, 18, 18, mouseX, mouseY);       // arrow down above chests
+            this.drawTexturedModalRectWithMouseHighlight(x+7+i*18,    y+40+(this.inventoryRows+4)*18, 9*18, 2*18, 18, 18, mouseX, mouseY);       // arrow up below player inv
         }
         int rowsToDrawDownArrow=inventoryRows;
         if (inventoryRows>6 && !ConfigurationHandler.allowExtraLargeChests())
             rowsToDrawDownArrow=6;
         for (int i=0; i<rowsToDrawDownArrow; i++) {
-            this.drawTexturedModalRect(x+ -18,      y+17+i*18,                      1*18, 2*18, 18, 18);       // arrow down
+            this.drawTexturedModalRectWithMouseHighlight(x+ -18,      y+17+i*18,                      1*18, 2*18, 18, 18, mouseX, mouseY);       // arrow down left of chest
         }
         for (int i=0; i<4; i++) {
-            this.drawTexturedModalRect(x+ -18,      y+28+(i+this.inventoryRows)*18, 9*18, 2*18, 18, 18);       // arrow up
+            this.drawTexturedModalRectWithMouseHighlight(x+ -18,      y+28+(i+this.inventoryRows)*18, 9*18, 2*18, 18, 18, mouseX, mouseY);       // arrow up left of player inv
         }
         
-        this.drawTexturedModalRect(x+this.xSize,    y+17,                           11*18, 0*18, 18, 18);       // broom chest
-        this.drawTexturedModalRect(x+this.xSize,    y+28+(this.inventoryRows)*18,   11*18, 0*18, 18, 18);       // broom inventory
-        this.drawTexturedModalRect(x+this.xSize+18, y+17,                           0 *18, 2*18, 18, 18);       // all down chest
-        this.drawTexturedModalRect(x+this.xSize+18, y+28+(this.inventoryRows)*18,   8 *18, 2*18, 18, 18);       // all up inventory
+        this.drawTexturedModalRectWithMouseHighlight(x+this.xSize,    y+17,                           11*18, 0*18, 18, 18, mouseX, mouseY);       // broom chest
+        this.drawTexturedModalRectWithMouseHighlight(x+this.xSize,    y+28+(this.inventoryRows)*18,   11*18, 0*18, 18, 18, mouseX, mouseY);       // broom inventory
+        this.drawTexturedModalRectWithMouseHighlight(x+this.xSize+18, y+17,                           0 *18, 2*18, 18, 18, mouseX, mouseY);       // all down chest
+        this.drawTexturedModalRectWithMouseHighlight(x+this.xSize+18, y+28+(this.inventoryRows)*18,   8 *18, 2*18, 18, 18, mouseX, mouseY);       // all up inventory
         
+        // GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
         for (int i=0; i<36; i++) {
             if (!isShiftKeyDown() && FrozenSlotDatabase.isSlotFrozen(i)) {
                 Slot slot=this.inventorySlots.inventorySlots.get(slotIndexFromPlayerInventoryIndex(i));
                 this.drawTexturedModalRect(x+slot.xPos, y+slot.yPos, 7*18+1, 3*18+1, 16, 16);               // stop sign
             }
+        }
+    }
+    
+    private void drawTexturedModalRectWithMouseHighlight(int screenx, int screeny, int textx, int texty, int sizex, int sizey, int mousex, int mousey) {
+        if (mousex >= screenx && mousex <= screenx+sizex && mousey >= screeny && mousey <= screeny+sizey) {
+            GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+            GlStateManager.popMatrix();
+            drawTexturedModalRect(screenx, screeny, textx, texty, sizex, sizey);
+            GlStateManager.pushMatrix();
+            if (ConfigurationHandler.toneDownButtons())
+                GlStateManager.color(1.0f, 1.0F, 1.0F, 0.3F);
+            if (ConfigurationHandler.halfSizeButtons())
+                GlStateManager.scale(0.5f, 0.5f, 0.5f);
+        } else {
+            if (ConfigurationHandler.halfSizeButtons())
+                drawTexturedModalRect(screenx*2+sizex/2, screeny*2+sizey/2, textx, texty, sizex, sizey);
+            else
+                drawTexturedModalRect(screenx, screeny, textx, texty, sizex, sizey);
         }
     }
     
