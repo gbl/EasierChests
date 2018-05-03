@@ -88,7 +88,10 @@ public class ExtendedGuiChest extends GuiContainer
             this.drawTexturedModalRect(x+7+i*18,    y+-18,                          1*18, 2*18, 18, 18);       // arrow down
             this.drawTexturedModalRect(x+7+i*18,    y+40+(this.inventoryRows+4)*18, 9*18, 2*18, 18, 18);       // arrow up
         }
-        for (int i=0; i<inventoryRows; i++) {
+        int rowsToDrawDownArrow=inventoryRows;
+        if (inventoryRows>6 && !ConfigurationHandler.allowExtraLargeChests())
+            rowsToDrawDownArrow=6;
+        for (int i=0; i<rowsToDrawDownArrow; i++) {
             this.drawTexturedModalRect(x+ -18,      y+17+i*18,                      1*18, 2*18, 18, 18);       // arrow down
         }
         for (int i=0; i<4; i++) {
@@ -192,13 +195,15 @@ public class ExtendedGuiChest extends GuiContainer
         IInventory inv=(isChest ? lowerChestInventory : upperChestInventory);
         
         int size=isChest ? inv.getSizeInventory() : 36;     // player's Inventory has 41 items which includes armor and left hand, but we don't want these.
+        if (size>9*6 && !ConfigurationHandler.allowExtraLargeChests())
+            size=9*6;
         for (int toSlot=0; toSlot<size; toSlot++) {
             ItemStack targetStack=inv.getStackInSlot(toSlot);
             String targetItemName=inv.getStackInSlot(toSlot).getDisplayName();
             if (targetStack.getItem() == Items.AIR) {
                 if (!isChest && toSlot<9)
                     continue;                   // Don't move stuff into empty player hotbar slots
-                targetItemName="ZZZ";           // make sure it is highest so gets sorted last
+                targetItemName="§§§";           // make sure it is highest so gets sorted last
             }
             if (isChest || toSlot>=9 && (isShiftKeyDown() || !FrozenSlotDatabase.isSlotFrozen(toSlot))) {         // Search for a better item, but don't replace hotbar things with different stuff
                 for (int fromSlot=toSlot+1; fromSlot<size; fromSlot++) {
@@ -240,6 +245,10 @@ public class ExtendedGuiChest extends GuiContainer
         } else {
             from=upperChestInventory; fromSize=36;
             to  =lowerChestInventory; toSize  =to.getSizeInventory();
+        }
+        if (!ConfigurationHandler.allowExtraLargeChests()) {
+            if (fromSize>9*6)   fromSize=9*6;
+            if (toSize  >9*6)   toSize=9*6;
         }
         for (int i=0; i<fromSize; i++) {
             if (!isChest && !isShiftKeyDown() && FrozenSlotDatabase.isSlotFrozen(i))

@@ -2,7 +2,7 @@
 {
   "modid": "easierchests",
   "name": "EasierChests",
-  "description": "Some Mod",
+  "description": "Easier way to move items between, and sort, player inventory and chests",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
