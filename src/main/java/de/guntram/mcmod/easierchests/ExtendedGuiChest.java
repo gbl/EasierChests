@@ -1,6 +1,5 @@
 package de.guntram.mcmod.easierchests;
 
-import java.io.IOException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -11,8 +10,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 /*
  * This code is copied from GuiChest.java, renamed to ExtendedGuiChest,and expanded.
@@ -21,7 +18,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * write a wrapper / subclass.
  */
 
-@SideOnly(Side.CLIENT)
 public class ExtendedGuiChest extends GuiContainer
 {
     /** The ResourceLocation containing the chest GUI texture. */
@@ -29,13 +25,13 @@ public class ExtendedGuiChest extends GuiContainer
     private static final ResourceLocation ICONS=new ResourceLocation(EasierChests.MODID, "textures/icons.png");
     private final IInventory upperChestInventory;
     private final IInventory lowerChestInventory;
-    /** window height is calculated with these values; the more rows, the heigher */
+    /** window height is calculated with these values; the more rows, the higher */
     private final int inventoryRows;
     private final int playerStartInTexture;
 
     public ExtendedGuiChest(IInventory upperInv, IInventory lowerInv, String texture, int playerStartInTexture)
     {
-        super(new ContainerChest(upperInv, lowerInv, Minecraft.getMinecraft().player));
+        super(new ContainerChest(upperInv, lowerInv, Minecraft.getInstance().player));
         this.upperChestInventory = upperInv;
         this.lowerChestInventory = lowerInv;
         this.allowUserInput = false;
@@ -51,10 +47,10 @@ public class ExtendedGuiChest extends GuiContainer
      * Draws the screen and all the components in it.
      */
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
+    public void render(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
-        super.drawScreen(mouseX, mouseY, partialTicks);
+        super.render(mouseX, mouseY, partialTicks);
         this.renderHoveredToolTip(mouseX, mouseY);
     }
 
@@ -64,8 +60,8 @@ public class ExtendedGuiChest extends GuiContainer
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
     {
-        this.fontRenderer.drawString(this.lowerChestInventory.getDisplayName().getUnformattedText(), 8, 6, 4210752);
-        this.fontRenderer.drawString(this.upperChestInventory.getDisplayName().getUnformattedText(), 8, this.ySize - 96 + 2, 4210752);
+        this.fontRenderer.drawString(this.lowerChestInventory.getDisplayName().getUnformattedComponentText(), 8, 6, 4210752);
+        this.fontRenderer.drawString(this.upperChestInventory.getDisplayName().getUnformattedComponentText(), 8, this.ySize - 96 + 2, 4210752);
     }
 
     /*
@@ -74,7 +70,7 @@ public class ExtendedGuiChest extends GuiContainer
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
     {
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(CHEST_GUI_TEXTURE);
         int x = (this.width - this.xSize) / 2;
         int y = (this.height - this.ySize) / 2;
@@ -85,9 +81,9 @@ public class ExtendedGuiChest extends GuiContainer
         // GlStateManager.blendFunc(1, 2);
         GlStateManager.pushMatrix();
         if (ConfigurationHandler.toneDownButtons())
-            GlStateManager.color(1.0f, 1.0F, 1.0F, 0.3F);
+            GlStateManager.color4f(1.0f, 1.0F, 1.0F, 0.3F);
         if (ConfigurationHandler.halfSizeButtons())
-            GlStateManager.scale(0.5f, 0.5f, 0.5f);
+            GlStateManager.scalef(0.5f, 0.5f, 0.5f);
 
         this.mc.getTextureManager().bindTexture(ICONS);
         
@@ -123,14 +119,14 @@ public class ExtendedGuiChest extends GuiContainer
     
     private void drawTexturedModalRectWithMouseHighlight(int screenx, int screeny, int textx, int texty, int sizex, int sizey, int mousex, int mousey) {
         if (mousex >= screenx && mousex <= screenx+sizex && mousey >= screeny && mousey <= screeny+sizey) {
-            GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+            GlStateManager.color4f(1.0f, 1.0f, 1.0f, 1.0f);
             GlStateManager.popMatrix();
             drawTexturedModalRect(screenx, screeny, textx, texty, sizex, sizey);
             GlStateManager.pushMatrix();
             if (ConfigurationHandler.toneDownButtons())
-                GlStateManager.color(1.0f, 1.0F, 1.0F, 0.3F);
+                GlStateManager.color4f(1.0f, 1.0F, 1.0F, 0.3F);
             if (ConfigurationHandler.halfSizeButtons())
-                GlStateManager.scale(0.5f, 0.5f, 0.5f);
+                GlStateManager.scalef(0.5f, 0.5f, 0.5f);
         } else {
             if (ConfigurationHandler.halfSizeButtons())
                 drawTexturedModalRect(screenx*2+sizex/2, screeny*2+sizey/2, textx, texty, sizex, sizey);
@@ -140,7 +136,7 @@ public class ExtendedGuiChest extends GuiContainer
     }
     
     @Override
-    protected void mouseClicked(final int mouseX, final int mouseY, final int mouseButton) throws IOException {
+    public boolean mouseClicked(double mouseX, double mouseY, final int mouseButton) {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         if (mouseButton==0) {
             checkForMyButtons(mouseX, mouseY);
@@ -149,14 +145,15 @@ public class ExtendedGuiChest extends GuiContainer
         if (mouseButton==2) {
             checkForToggleFrozen(mouseX, mouseY);
         }
+        return true;
     }
         
-    void checkForMyButtons(final int mouseX, final int mouseY) {
+    void checkForMyButtons(double mouseX, double mouseY) {
         int x = (this.width - this.xSize) / 2;
         int y = (this.height - this.ySize) / 2;
         
         if (mouseX>=x-18 && mouseX<=x) {                                        // left buttons
-            int deltay = mouseY-y;
+            int deltay = (int)mouseY-y;
             if (deltay < this.inventoryRows*18+17)
                 clickSlotsInRow((deltay-17)/18);
             else {
@@ -183,12 +180,12 @@ public class ExtendedGuiChest extends GuiContainer
                 isChest=false;
             else
                 return;
-            int column=(mouseX-x-7)/18;
+            int column=((int)mouseX-x-7)/18;
             clickSlotsInColumn(column, isChest);
         }
     }
     
-    void checkForToggleFrozen(int mouseX, int mouseY) {
+    void checkForToggleFrozen(double mouseX, double mouseY) {
         for (int i = 0; i < this.inventorySlots.inventorySlots.size(); ++i) {
             int invIndex=this.playerInventoryIndexFromSlotIndex(i);
             if (invIndex==-1)
@@ -227,7 +224,7 @@ public class ExtendedGuiChest extends GuiContainer
             size=9*6;
         for (int toSlot=0; toSlot<size; toSlot++) {
             ItemStack targetStack=inv.getStackInSlot(toSlot);
-            String targetItemName=inv.getStackInSlot(toSlot).getDisplayName();
+            String targetItemName=targetStack.getTranslationKey();
             if (targetStack.getItem() == Items.AIR) {
                 if (!isChest && toSlot<9)
                     continue;                   // Don't move stuff into empty player hotbar slots
@@ -240,7 +237,7 @@ public class ExtendedGuiChest extends GuiContainer
                     ItemStack slotStack=inv.getStackInSlot(fromSlot);
                     if (slotStack.getItem()==Items.AIR)
                         continue;
-                    String slotItem=inv.getStackInSlot(fromSlot).getDisplayName();
+                    String slotItem=inv.getStackInSlot(fromSlot).getTranslationKey();
                     if (slotItem.compareToIgnoreCase(targetItemName)<0)
                         targetItemName=slotItem;
                 }
@@ -249,11 +246,11 @@ public class ExtendedGuiChest extends GuiContainer
                 if (!isChest && isShiftKeyDown() && FrozenSlotDatabase.isSlotFrozen(fromSlot))
                     continue;
                 targetStack=inv.getStackInSlot(toSlot);
-                if (targetStack.getDisplayName().equals(targetItemName)         // @TODO mit Items arbeiten nicht mit Names
+                if (targetStack.getTranslationKey().equals(targetItemName)         // @TODO mit Items arbeiten nicht mit Names
                 &&  targetStack.getCount() == targetStack.getMaxStackSize())
                     break;
                 ItemStack slotStack=inv.getStackInSlot(fromSlot);
-                if (slotStack.getDisplayName().equals(targetItemName)) {
+                if (slotStack.getTranslationKey().equals(targetItemName)) {
                     slotClick (isChest ? fromSlot : slotIndexFromPlayerInventoryIndex(fromSlot), 0, ClickType.PICKUP);
                     slotClick (isChest ? toSlot   : slotIndexFromPlayerInventoryIndex(toSlot)  , 0, ClickType.PICKUP);
                     slotClick (isChest ? fromSlot : slotIndexFromPlayerInventoryIndex(fromSlot), 0, ClickType.PICKUP);                    

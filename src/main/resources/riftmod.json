@@ -1,0 +1,10 @@
+{
+    "id": "easierchests",
+    "name": "EasierChests",
+    "authors": [
+        "Giselbaer"
+    ],
+    "listeners": [
+        "de.guntram.mcmod.easierchests.EasierChests"
+    ]
+}
