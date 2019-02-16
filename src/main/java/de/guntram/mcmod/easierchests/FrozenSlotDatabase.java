@@ -38,6 +38,7 @@ public class FrozenSlotDatabase {
     private static boolean loadConfigFile() {
         BufferedReader reader=null;
         Pattern pattern=Pattern.compile("frozen\\.(\\d+)=(.*)");
+        System.out.println("trying to read frozen slots from "+configFile.getAbsolutePath());
         try {
             reader=new BufferedReader(new FileReader(configFile));
             String line;
@@ -57,6 +58,7 @@ public class FrozenSlotDatabase {
             reader.close();
             return true;
         } catch (IOException ex) {
+            System.out.println(ex);
             try {
                 if (reader!=null)
                     reader.close();
@@ -68,12 +70,14 @@ public class FrozenSlotDatabase {
     
     private static void saveConfigFile() {
         PrintWriter writer=null;
+        System.out.println("trying to save frozen slots to "+configFile.getAbsolutePath());
         try {
             writer=new PrintWriter(new FileWriter(configFile));
             for (int i=0; i<PLAYER_SLOTS; i++)
                 writer.println("frozen."+i+"="+(frozenSlots[i] ? "true" : "false"));
             writer.close();
         } catch (IOException ex) {
+            System.out.println(ex);
             if (writer!=null)
                 writer.close();
         }

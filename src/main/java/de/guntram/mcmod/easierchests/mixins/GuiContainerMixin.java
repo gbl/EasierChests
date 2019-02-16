@@ -24,10 +24,13 @@ public class GuiContainerMixin extends AbstractClientPlayer {
     
     @Inject(method="displayGUIChest", at=@At("HEAD"), cancellable = true) 
     public void displayExtendedChestGUI(IInventory lowerChestInventory, CallbackInfo ci) {
-        if (!(lowerChestInventory instanceof IInteractionObject))
-            return;
-        String type=((IInteractionObject)lowerChestInventory).getGuiID();
-        if ("minecraft:chest".equals(type)) {
+        String type;
+        if (!(lowerChestInventory instanceof IInteractionObject)) {
+            type="minecraft:container";
+        } else {
+            type=((IInteractionObject)lowerChestInventory).getGuiID();
+        }
+        if ("minecraft:chest".equals(type) || "minecraft:container".equals(type)) {
             this.mc.displayGuiScreen(new ExtendedGuiChest(this.inventory, lowerChestInventory, "generic_54", 126));
             ci.cancel();
         }

@@ -1,5 +1,6 @@
 package de.guntram.mcmod.easierchests;
 
+import de.guntram.mcmod.rifttools.ConfigurationProvider;
 import java.io.File;
 import org.dimdev.riftloader.listener.InitializationListener;
 import org.spongepowered.asm.launch.MixinBootstrap;
@@ -14,8 +15,10 @@ public class EasierChests implements InitializationListener
     public void onInitialization() {
         MixinBootstrap.init();
         Mixins.addConfiguration("mixins.easierchests.json");        
+        Mixins.addConfiguration("mixins.rifttools-de-guntram.json");
         ConfigurationHandler confHandler = ConfigurationHandler.getInstance();
-        confHandler.load(new File("easierchests.json"));         // TODO
-        FrozenSlotDatabase.init(new File("."));
+        ConfigurationProvider.register("EasierChests", confHandler);
+        confHandler.load(ConfigurationProvider.getSuggestedFile(MODID));        
+        FrozenSlotDatabase.init(new File("config"));
     }
 }
