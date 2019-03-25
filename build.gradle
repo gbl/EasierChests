@@ -17,7 +17,7 @@ apply plugin: 'java'
 
 group = "de.guntram.mcmod.easierchests"
 // group = "de.guntram.mcmod"
-version = "1.13.2-rift1.0.4.77-1.2beta1"
+version = "1.13.2-rift1.0.4.77-1.2beta2"
 archivesBaseName = "easierchests"
 
 sourceCompatibility = '1.8'

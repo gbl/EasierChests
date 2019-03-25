@@ -118,7 +118,7 @@ public class ExtendedGuiChest extends GuiContainer
     }
     
     private void drawTexturedModalRectWithMouseHighlight(int screenx, int screeny, int textx, int texty, int sizex, int sizey, int mousex, int mousey) {
-        if (mousex >= screenx && mousex <= screenx+sizex && mousey >= screeny && mousey <= screeny+sizey) {
+        if (mousex >= screenx && mousex < screenx+sizex && mousey >= screeny && mousey < screeny+sizey) {
             GlStateManager.color4f(1.0f, 1.0f, 1.0f, 1.0f);
             GlStateManager.popMatrix();
             drawTexturedModalRect(screenx, screeny, textx, texty, sizex, sizey);
@@ -156,7 +156,7 @@ public class ExtendedGuiChest extends GuiContainer
             int deltay = (int)mouseY-y;
             if (deltay < this.inventoryRows*18+17)
                 clickSlotsInRow((deltay-17)/18);
-            else {
+            else if (deltay < (this.inventoryRows + 4 ) * 18 + 28) {
                 clickSlotsInRow((deltay-28)/18);
             }
         } else if (mouseX>x+this.xSize) {                                       // right buttons
