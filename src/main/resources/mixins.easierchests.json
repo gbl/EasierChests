@@ -1,7 +1,7 @@
 {
     "required": true,
     "package": "de.guntram.mcmod.easierchests.mixins",
-    "refmap": "mixins.easierchests.refmap.json",
+    "refmap": "EasierChests-refmap.json",
     "minVersion": "0.6",
     "client": [
         "GuiContainerMixin"

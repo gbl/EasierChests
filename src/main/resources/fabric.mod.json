@@ -1,0 +1,19 @@
+{
+    "id": "easierchests",
+    "name": "EasierChests",
+    "description": "Move stuff between inventory and chests, and sort them",
+    "version": "1.0.0",
+    "side": "client",
+    "authors": [
+        "Giselbaer"
+    ],
+    "initializers": [
+        "de.guntram.mcmod.easierchests.EasierChests"
+    ],
+    "requires": {
+      "fabric": "*"
+    },
+    "mixins": {
+      "client": [ "mixins.easierchests.json", "mixins.easierchests_fabrictools.json" ]
+    }
+}
