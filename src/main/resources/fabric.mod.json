@@ -1,19 +1,26 @@
 {
+    "schemaVersion": 1,
     "id": "easierchests",
-    "name": "EasierChests",
-    "description": "Move stuff between inventory and chests, and sort them",
-    "version": "1.0.0",
-    "side": "client",
-    "authors": [
-        "Giselbaer"
+    "version": "1.14pre5-fabric0.4.1-1.2",
+    "environment": "client",
+    "entrypoints": {
+        "client": [ "de.guntram.mcmod.easierchests.EasierChests" ],
+        "modmenu": [ "de.guntram.mcmod.easierchests.MMConfigurationHandler" ]
+    },
+    "custom": {
+        "modmenu:clientsideOnly": true
+    },
+    "mixins": [
+        "mixins.easierchests.json",
+        "mixins.easierchests_fabrictools.json"
     ],
-    "initializers": [
-        "de.guntram.mcmod.easierchests.EasierChests"
-    ],
-    "requires": {
+    "depends": {
       "fabric": "*"
     },
-    "mixins": {
-      "client": [ "mixins.easierchests.json", "mixins.easierchests_fabrictools.json" ]
-    }
+    "recommends": {
+      "modmenu" : "*"
+    },    
+    "name": "EasierChests",
+    "description": "Move stuff between inventory and chests, and sort them",
+    "authors": [ "Giselbaer" ]
 }

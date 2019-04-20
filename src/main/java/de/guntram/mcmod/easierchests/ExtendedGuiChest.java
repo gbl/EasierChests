@@ -1,6 +1,5 @@
 package de.guntram.mcmod.easierchests;
 
-import net.minecraft.client.gui.container.ContainerScreen54;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.ContainerScreen;
 import net.minecraft.container.Container;
