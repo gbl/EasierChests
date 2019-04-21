@@ -4,7 +4,8 @@
     "refmap": "EasierChests-refmap.json",
     "minVersion": "0.6",
     "client": [
-        "GuiContainerMixin"
+        "GuiContainerMixin",
+        "ShulkerBoxInventoryMixin"
     ],
     "injectors": {
         "defaultRequire": 1

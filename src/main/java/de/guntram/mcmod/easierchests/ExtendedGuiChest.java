@@ -2,8 +2,8 @@ package de.guntram.mcmod.easierchests;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.ContainerScreen;
-import net.minecraft.container.Container;
 import net.minecraft.container.GenericContainer;
+import net.minecraft.container.ShulkerBoxContainer;
 import net.minecraft.container.Slot;
 import net.minecraft.container.SlotActionType;
 import net.minecraft.entity.player.PlayerInventory;
@@ -25,18 +25,28 @@ public class ExtendedGuiChest extends ContainerScreen
     private static final Identifier ICONS=new Identifier(EasierChests.MODID, "textures/icons.png");
     private final Identifier background;
     private final Inventory containerInventory;
+    private final boolean separateBlits;
 
-    public ExtendedGuiChest(Container container, PlayerInventory lowerInv, TextComponent title,
-            String backgroundPNG, int rows)
+    public ExtendedGuiChest(GenericContainer container, PlayerInventory lowerInv, TextComponent title,
+            int rows)
     {
         super(container, lowerInv, title);
         // ToDo: make container a Container again; can only
         // use getInventory() on GenericContainer though. Need to
         // find out how to access the inventory in the shulker box case.
-        containerInventory = ((GenericContainer) container).getInventory();
+        containerInventory = (container).getInventory();
         this.inventoryRows=rows;
         containerHeight = 114 + rows * 18;
-        background = new Identifier("minecraft", "textures/gui/container/"+backgroundPNG+".png");
+        background = new Identifier("minecraft", "textures/gui/container/generic_54.png");
+        separateBlits=true;
+    }
+    
+    public ExtendedGuiChest(ShulkerBoxContainer container, PlayerInventory lowerInv, TextComponent title) {
+        super(container, lowerInv, title);
+        containerInventory = ((InventoryExporter)container).getInventory();
+        inventoryRows = 3;
+        background = new Identifier("minecraft", "textures/gui/container/shulker_box.png");
+        separateBlits=false;
     }
 
     @Override
@@ -64,8 +74,12 @@ public class ExtendedGuiChest extends ContainerScreen
         this.minecraft.getTextureManager().bindTexture(background);
         int int_3 = (this.width - this.containerWidth) / 2;
         int int_4 = (this.height - this.containerHeight) / 2;
-        this.blit(int_3, int_4, 0, 0, this.containerWidth, this.inventoryRows * 18 + 17);
-        this.blit(int_3, int_4 + this.inventoryRows * 18 + 17, 0, 126, this.containerWidth, 96);
+        if (separateBlits) {
+            this.blit(int_3, int_4, 0, 0, this.containerWidth, this.inventoryRows * 18 + 17);
+            this.blit(int_3, int_4 + this.inventoryRows * 18 + 17, 0, 126, this.containerWidth, 96);
+        } else {
+            this.blit(int_3, int_4, 0, 0, this.containerWidth, this.containerHeight);
+        }
         
         
         int x = (this.width - this.containerWidth ) / 2;
