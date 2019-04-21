@@ -2,6 +2,7 @@ package de.guntram.mcmod.easierchests;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.ContainerScreen;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.container.GenericContainer;
 import net.minecraft.container.ShulkerBoxContainer;
 import net.minecraft.container.Slot;
@@ -12,6 +13,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.TextComponent;
 import net.minecraft.util.Identifier;
+import org.lwjgl.glfw.GLFW;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_KP_1;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_KP_2;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_KP_7;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_KP_8;
 
 /*
  * Warning - this code should extend ContainerScreen54 AND ShulkerBoxScreen,
@@ -107,10 +113,14 @@ public class ExtendedGuiChest extends ContainerScreen
             this.drawTexturedModalRectWithMouseHighlight(x+ -18,      y+28+(i+this.inventoryRows)*18, 9*18, 2*18, 18, 18, mouseX, mouseY);       // arrow up left of player inv
         }
         
-        this.drawTexturedModalRectWithMouseHighlight(x+this.containerWidth,    y+17,                           11*18, 0*18, 18, 18, mouseX, mouseY);       // broom chest
-        this.drawTexturedModalRectWithMouseHighlight(x+this.containerWidth,    y+28+(this.inventoryRows)*18,   11*18, 0*18, 18, 18, mouseX, mouseY);       // broom inventory
-        this.drawTexturedModalRectWithMouseHighlight(x+this.containerWidth+18, y+17,                           0 *18, 2*18, 18, 18, mouseX, mouseY);       // all down chest
-        this.drawTexturedModalRectWithMouseHighlight(x+this.containerWidth+18, y+28+(this.inventoryRows)*18,   8 *18, 2*18, 18, 18, mouseX, mouseY);       // all up inventory
+        this.drawTexturedModalRectWithMouseHighlight(x+this.containerWidth, y+17,                           
+                11*18, 0*18, 18, 18, mouseX, mouseY);       // broom chest
+        this.drawTexturedModalRectWithMouseHighlight(x+this.containerWidth, y+28+(this.inventoryRows)*18,   
+                11*18, 0*18, 18, 18, mouseX, mouseY);      // broom inventory
+        this.drawTexturedModalRectWithMouseHighlight(x+this.containerWidth, y+17+18,
+                0 *18, 2*18, 18, 18, mouseX, mouseY);       // all down chest
+        this.drawTexturedModalRectWithMouseHighlight(x+this.containerWidth, y+28+(this.inventoryRows)*18+18,
+                8 *18, 2*18, 18, 18, mouseX, mouseY);       // all up inventory
         
         // GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.disableBlend();
@@ -121,6 +131,11 @@ public class ExtendedGuiChest extends ContainerScreen
                 this.blit(x+slot.xPosition, y+slot.yPosition, 7*18+1, 3*18+1, 16, 16);               // stop sign
             }
         }
+        
+        myTooltip(x+this.containerWidth, y+17,  18, 18, mouseX, mouseY, I18n.translate("easierchests.sortchest"));
+        myTooltip(x+this.containerWidth, y+28+(this.inventoryRows)*18, 18, 18, mouseX, mouseY, I18n.translate("easierchests.sortplayer"));
+        myTooltip(x+this.containerWidth, y+17+18, 18, 18, mouseX, mouseY, I18n.translate("easierchests.matchdown"));
+        myTooltip(x+this.containerWidth, y+28+(this.inventoryRows)*18+18, 18, 18, mouseX, mouseY, I18n.translate("easierchests.matchup"));
     }
     
     private void drawTexturedModalRectWithMouseHighlight(int screenx, int screeny, int textx, int texty, int sizex, int sizey, int mousex, int mousey) {
@@ -138,6 +153,12 @@ public class ExtendedGuiChest extends ContainerScreen
                 blit(screenx*2+sizex/2, screeny*2+sizey/2, textx, texty, sizex, sizey);
             else
                 blit(screenx, screeny, textx, texty, sizex, sizey);
+        }
+    }
+    
+    private void myTooltip(int screenx, int screeny, int sizex, int sizey, int mousex, int mousey, String tooltip) {
+        if (tooltip!=null && mousex>=screenx && mousex<=screenx+sizex && mousey>=screeny && mousey <= screeny+sizey) {
+            this.renderTooltip(tooltip, mousex, mousey);
         }
     }
     
@@ -165,19 +186,15 @@ public class ExtendedGuiChest extends ContainerScreen
             else if (deltay < (this.inventoryRows + 4 ) * 18 + 28) {
                 clickSlotsInRow((deltay-28)/18);
             }
-        } else if (mouseX>x+this.containerWidth) {                                       // right buttons
-            boolean isChest;
+        } else if (mouseX>x+this.containerWidth && mouseX <= x+this.containerWidth+18) {   // right buttons
             if (mouseY>y+17 && mouseY<y+17+18)
-                isChest=true;
+                sortInventory(true);
+            else if (mouseY > y+17+18 && mouseY < y+17+36)
+                moveMatchingItems(true);
             else if (mouseY>y+28+(this.inventoryRows)*18 && mouseY<y+28+(this.inventoryRows)*18+18)
-                isChest=false;
-            else
-                return;
-            if (mouseX<=x+this.containerWidth+18)
-                sortInventory(isChest);
-            else if (mouseX<=x+this.containerWidth+36) {
-                moveMatchingItems(isChest);
-            }
+                sortInventory(false);
+            else if (mouseY>y+28+(this.inventoryRows)*18+18 && mouseY<y+28+(this.inventoryRows)*18+36)
+                moveMatchingItems(false);
         } else if (mouseX>x+7 && mouseX<x+7+9*18) {                             // top/bottom buttons
             boolean isChest;
             if (mouseY>y-18 && mouseY<y)
@@ -189,6 +206,20 @@ public class ExtendedGuiChest extends ContainerScreen
             int column=((int)mouseX-x-7)/18;
             clickSlotsInColumn(column, isChest);
         }
+    }
+    
+    @Override
+    public boolean keyPressed(int keycode, int scancode, int modifiers) {
+        System.out.println(String.format("key %d/0x%04x; scancode. %04x; modifiers %04x\n", keycode, keycode, scancode, modifiers));
+        // super.keyPressed always returns true so can't use that result
+        super.keyPressed(keycode, scancode, modifiers);
+        switch (keycode) {
+            case GLFW_KEY_KP_1:     sortInventory(false); break;
+            case GLFW_KEY_KP_2:     moveMatchingItems(true); break;
+            case GLFW_KEY_KP_7:     sortInventory(true); break;
+            case GLFW_KEY_KP_8:     moveMatchingItems(false); break;
+        }
+        return true;
     }
     
     void checkForToggleFrozen(double mouseX, double mouseY) {
