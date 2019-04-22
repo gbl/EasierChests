@@ -1,0 +1,7 @@
+{   
+    "key.categories.easierchests":"Easier Chests",
+    "easierchests.sortchest" : "Sort chest (Keypad 7)",
+    "easierchests.sortplayer": "Sort inventory (Keypad 1)",
+    "easierchests.matchdown": "Move matching items to player (Keypad 2)",
+    "easierchests.matchup": "Move matching items to chest (Keypad 8)"
+}
