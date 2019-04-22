@@ -161,7 +161,7 @@ public class ExtendedGuiChest extends ContainerScreen
             this.renderTooltip(tooltip, mousex, mousey);
         }
     }
-    
+
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, final int mouseButton) {
         super.mouseClicked(mouseX, mouseY, mouseButton);
@@ -210,7 +210,6 @@ public class ExtendedGuiChest extends ContainerScreen
     
     @Override
     public boolean keyPressed(int keycode, int scancode, int modifiers) {
-        System.out.println(String.format("key %d/0x%04x; scancode. %04x; modifiers %04x\n", keycode, keycode, scancode, modifiers));
         // super.keyPressed always returns true so can't use that result
         super.keyPressed(keycode, scancode, modifiers);
         switch (keycode) {
@@ -263,7 +262,6 @@ public class ExtendedGuiChest extends ContainerScreen
         for (int toSlot=0; toSlot<size; toSlot++) {
             ItemStack targetStack=inv.getInvStack(toSlot);
             String targetItemName=targetStack.getTranslationKey();
-            System.out.println("slot "+toSlot+" has "+targetStack.getItem().getTranslationKey());
             if (targetStack.getItem() == Items.AIR) {
                 if (!isChest && toSlot<9)
                     continue;                   // Don't move stuff into empty player hotbar slots
