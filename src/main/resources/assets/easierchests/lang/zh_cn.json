@@ -1,0 +1,7 @@
+{   
+    "key.categories.easierchests":"更容易的箱子",
+    "easierchests.sortchest" : "排序箱子(小键盘 7)",
+    "easierchests.sortplayer": "排序物品栏(小键盘 1)",
+    "easierchests.matchdown": "移动匹配物品到玩家(小键盘 2)",
+    "easierchests.matchup": "移动匹配物品到箱子(小键盘 8)"
+}
