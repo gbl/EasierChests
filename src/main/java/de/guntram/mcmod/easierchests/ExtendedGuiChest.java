@@ -1,7 +1,7 @@
 package de.guntram.mcmod.easierchests;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.gui.ContainerScreen;
+import net.minecraft.client.gui.screen.ingame.AbstractContainerScreen;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.container.GenericContainer;
 import net.minecraft.container.ShulkerBoxContainer;
@@ -11,9 +11,8 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.text.TextComponent;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import org.lwjgl.glfw.GLFW;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_KP_1;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_KP_2;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_KP_7;
@@ -25,7 +24,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_KP_8;
  * that are in those classes (and are identical ...) ourselves. Doh.
  */
 
-public class ExtendedGuiChest extends ContainerScreen
+public class ExtendedGuiChest extends AbstractContainerScreen
 {
     private final int inventoryRows;
     private static final Identifier ICONS=new Identifier(EasierChests.MODID, "textures/icons.png");
@@ -33,7 +32,7 @@ public class ExtendedGuiChest extends ContainerScreen
     private final Inventory containerInventory;
     private final boolean separateBlits;
 
-    public ExtendedGuiChest(GenericContainer container, PlayerInventory lowerInv, TextComponent title,
+    public ExtendedGuiChest(GenericContainer container, PlayerInventory lowerInv, Text title,
             int rows)
     {
         super(container, lowerInv, title);
@@ -47,7 +46,7 @@ public class ExtendedGuiChest extends ContainerScreen
         separateBlits=true;
     }
     
-    public ExtendedGuiChest(ShulkerBoxContainer container, PlayerInventory lowerInv, TextComponent title) {
+    public ExtendedGuiChest(ShulkerBoxContainer container, PlayerInventory lowerInv, Text title) {
         super(container, lowerInv, title);
         containerInventory = ((InventoryExporter)container).getInventory();
         inventoryRows = 3;
@@ -66,8 +65,8 @@ public class ExtendedGuiChest extends ContainerScreen
     @Override
     protected void drawForeground(int mouseX, int mouseY)
     {
-        this.font.draw(this.title.getFormattedText(), 8.0F, 6.0F, 4210752);
-        this.font.draw(this.playerInventory.getDisplayName().getFormattedText(), 8.0F, (float)(this.containerHeight - 96 + 2), 4210752);
+        this.font.draw(this.title.asFormattedString(), 8.0F, 6.0F, 4210752);
+        this.font.draw(this.playerInventory.getDisplayName().asFormattedString(), 8.0F, (float)(this.containerHeight - 96 + 2), 4210752);
     }
 
     /*
@@ -284,7 +283,7 @@ public class ExtendedGuiChest extends ContainerScreen
                     continue;
                 targetStack=inv.getInvStack(toSlot);
                 if (targetStack.getTranslationKey().equals(targetItemName)         // @TODO mit Items arbeiten nicht mit Names
-                &&  targetStack.getAmount()== targetStack.getMaxAmount())
+                &&  targetStack.getCount()== targetStack.getMaxCount())
                     break;
                 ItemStack slotStack=inv.getInvStack(fromSlot);
                 if (slotStack.getTranslationKey().equals(targetItemName)) {
@@ -323,7 +322,7 @@ public class ExtendedGuiChest extends ContainerScreen
                 slot=slotIndexFromPlayerInventoryIndex(i);
             for (int j=0; j<toSize; j++) {
                 ItemStack toStack = to.getInvStack(j);
-                if (fromStack.isEqualIgnoreTags(toStack)
+                if (fromStack.isItemEqual(toStack)
                 &&  ItemStack.areTagsEqual(fromStack, toStack)) {
                     // System.out.println("  from["+i+"] is same as to["+j+"] ("+toStack.getDisplayName()+"), clicking "+slot);
                     slotClick(slot, 0, SlotActionType.QUICK_MOVE);

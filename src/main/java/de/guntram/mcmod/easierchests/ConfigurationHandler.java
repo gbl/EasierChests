@@ -1,15 +1,15 @@
 package de.guntram.mcmod.easierchests;
 
-import de.guntram.mcmod.fabrictools.ConfigChangedEvent;
+/* import de.guntram.mcmod.fabrictools.ConfigChangedEvent;
 import de.guntram.mcmod.fabrictools.Configuration;
-import de.guntram.mcmod.fabrictools.ModConfigurationHandler;
+import de.guntram.mcmod.fabrictools.ModConfigurationHandler; */
 import java.io.File;
 
-public class ConfigurationHandler implements ModConfigurationHandler {
+public class ConfigurationHandler {
 
     private static ConfigurationHandler instance;
 
-    private Configuration config;
+//    private Configuration config;
     private String configFileName;
 
     public static ConfigurationHandler getInstance() {
@@ -21,14 +21,16 @@ public class ConfigurationHandler implements ModConfigurationHandler {
     private boolean halfSizeButtons;
     private boolean toneDownButtons;
 
-    public void load(final File configFile) {
+    public void load(final File configFile) { /*
         if (config == null) {
             config = new Configuration(configFile);
             configFileName=configFile.getPath();
             loadConfig();
-        }
+        } */
+        loadConfig();
     }
 
+    /*
     @Override
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
         // System.out.println("OnConfigChanged for "+event.getModID());
@@ -36,8 +38,10 @@ public class ConfigurationHandler implements ModConfigurationHandler {
             loadConfig();
         }
     }
+*/
     
     private void loadConfig() {
+    /*
 //        allowUpload=config.getBoolean("Allow Upload", Configuration.CATEGORY_CLIENT, allowUpload, "Allow Upload to central database");
 //        allowDownload=config.getBoolean("Allow Download", Configuration.CATEGORY_CLIENT, allowDownload, "Allow Download from central database (only if Upload is enabled as well)");
 //        saveEveryXMinutes=config.getInt("Save every X minutes", Configuration.CATEGORY_CLIENT, 1, 1, 60, "How often sign data will be saved locally");
@@ -48,12 +52,18 @@ public class ConfigurationHandler implements ModConfigurationHandler {
         
         if (config.hasChanged())
             config.save();
+    */
+    extraLargeChests=false;
+    halfSizeButtons=false;
+    toneDownButtons=true;
     }
     
+    /*
     @Override
     public Configuration getConfig() {
         return config;
     }
+    */
     
     public static String getConfigFileName() {
         return getInstance().configFileName;
