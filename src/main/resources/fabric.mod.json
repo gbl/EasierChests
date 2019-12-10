@@ -1,7 +1,7 @@
 {
     "schemaVersion": 1,
     "id": "easierchests",
-    "version": "1.14-fabric0.2.7-1.3.1",
+    "version": "1.15.pre6-fabric0.4.1-1.3.1",
     "environment": "client",
     "entrypoints": {
         "client": [ "de.guntram.mcmod.easierchests.EasierChests" ],
