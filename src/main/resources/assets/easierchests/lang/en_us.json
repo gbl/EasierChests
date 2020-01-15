@@ -1,7 +1,12 @@
 {   
-    "key.categories.easierchests":"Easier Chests",
-    "easierchests.sortchest" : "Sort chest (Keypad 7)",
-    "easierchests.sortplayer": "Sort inventory (Keypad 1)",
-    "easierchests.matchdown": "Move matching items to player (Keypad 2)",
-    "easierchests.matchup": "Move matching items to chest (Keypad 8)"
+    "key.categories.easierchests":"EasierChests",
+    "easierchests.sortchest" : "Sort chest",
+    "easierchests.sortplayer": "Sort inventory",
+    "easierchests.matchdown": "Move matches to player",
+    "easierchests.matchup": "Move matches to chest",
+
+    "key.easierchests.sortchest" : "Sort chest",
+    "key.easierchests.sortplayer": "Sort inventory",
+    "key.easierchests.matchdown": "Move matches to player",
+    "key.easierchests.matchup": "Move matches to chest"
 }
