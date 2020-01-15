@@ -5,7 +5,8 @@
     "minVersion": "0.6",
     "client": [
         "GuiContainerMixin",
-        "ShulkerBoxInventoryMixin"
+        "ShulkerBoxInventoryMixin",
+        "AbstractContainerScreenMixin"
     ],
     "injectors": {
         "defaultRequire": 1
