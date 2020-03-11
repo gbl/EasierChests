@@ -333,6 +333,11 @@ public class ExtendedGuiChest extends AbstractContainerScreen
         ListTag originalEnchantments = (original.getItem() == Items.ENCHANTED_BOOK) ? EnchantedBookItem.getEnchantmentTag(original) : original.getEnchantments();
         ListTag replacementEnchantments = (replacement.getItem() == Items.ENCHANTED_BOOK) ? EnchantedBookItem.getEnchantmentTag(replacement) : replacement.getEnchantments();
         if (replacementEnchantments == null || replacementEnchantments.isEmpty()) {
+            if (originalEnchantments == null || originalEnchantments.isEmpty()) {
+                // Items are equal - same item type, same display name, no enchantments.
+                // Try to merge them, but only if the original ItemStack isn't full.
+                return original.getCount() != original.getMaxCount();
+            }
             return true;
         }
         if (originalEnchantments == null || originalEnchantments.isEmpty()) {
