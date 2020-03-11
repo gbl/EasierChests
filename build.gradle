@@ -18,6 +18,7 @@ archivesBaseName = "easierchests"
 version = "1.15-fabric0.4.23-1.4"
 
 minecraft {
+        refmapName = "EasierChests-refmap.json";
 }
 
 dependencies {
