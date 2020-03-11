@@ -5,8 +5,9 @@
  */
 package de.guntram.mcmod.easierchests.interfaces;
 
-import net.minecraft.container.Slot;
-import net.minecraft.container.SlotActionType;
+import net.minecraft.screen.slot.Slot;
+import net.minecraft.screen.slot.SlotActionType;
+
 
 /**
  *

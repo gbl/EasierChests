@@ -16,7 +16,6 @@ public class EasierChests implements ClientModInitializer
 {
     static final String MODID="easierchests";
     static final String MODNAME="EasierChests";
-    static final String VERSION="1.15-fabric0.4.23-1.4";
     
     private static final String category = "key.categories.easierchests";
     

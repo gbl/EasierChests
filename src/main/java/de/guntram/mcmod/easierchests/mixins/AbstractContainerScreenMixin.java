@@ -5,14 +5,14 @@ import de.guntram.mcmod.easierchests.ExtendedGuiChest;
 import de.guntram.mcmod.easierchests.interfaces.SlotClicker;
 import net.minecraft.client.gui.screen.Screen;
 import static net.minecraft.client.gui.screen.Screen.hasAltDown;
-import net.minecraft.client.gui.screen.ingame.AbstractContainerScreen;
-import net.minecraft.container.Container;
-import net.minecraft.container.GenericContainer;
-import net.minecraft.container.PlayerContainer;
-import net.minecraft.container.ShulkerBoxContainer;
-import net.minecraft.container.Slot;
-import net.minecraft.container.SlotActionType;
+import net.minecraft.client.gui.screen.ingame.ScreenWithHandler;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.screen.GenericContainerScreenHandler;
+import net.minecraft.screen.PlayerScreenHandler;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ShulkerBoxScreenHandler;
+import net.minecraft.screen.slot.Slot;
+import net.minecraft.screen.slot.SlotActionType;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -21,12 +21,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(AbstractContainerScreen.class)
+@Mixin(ScreenWithHandler.class)
 public abstract class AbstractContainerScreenMixin extends Screen implements SlotClicker {
 
     @Shadow protected void onMouseClick(Slot slot, int invSlot, int button, SlotActionType slotActionType) {}
-    @Shadow @Final protected Container container;
-    @Shadow protected int x, y, containerWidth, containerHeight;
+    @Shadow @Final protected ScreenHandler handler;
+    @Shadow protected int x, y, backgroundWidth, backgroundHeight;
     @Shadow @Final protected PlayerInventory playerInventory;
 
     protected AbstractContainerScreenMixin() { super(null); }
@@ -38,10 +38,10 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
     
     @Override
     public int EasierChests$getPlayerInventoryStartIndex() {
-        if (container instanceof PlayerContainer) {
+        if (handler instanceof PlayerScreenHandler) {
             return 9;
         } else {
-            return this.container.slotList.size()-36;
+            return this.handler.slots.size()-36;
         }
     }
     
@@ -70,30 +70,30 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
     @Inject(method="drawSlot", at=@At("RETURN"))
     public void EasierChests$DrawSlotIndex(Slot slot, CallbackInfo ci) {
         if (hasAltDown()) {
-            this.font.draw(Integer.toString(slot.id), slot.xPosition, slot.yPosition, 0x808090);
+            this.textRenderer.draw(Integer.toString(slot.id), slot.xPosition, slot.yPosition, 0x808090);
         }
     }
     
     @Inject(method="render", at=@At(value="INVOKE", target="Lcom/mojang/blaze3d/systems/RenderSystem;disableRescaleNormal()V"))
     public void EasierChests$renderSpecialButtons(int mouseX, int mouseY, float delta, CallbackInfo ci) {
         Screen me = this;       // work around Java compiler ...
-        AbstractContainerScreen acScreen = (AbstractContainerScreen) me;
-        ExtendedGuiChest.drawPlayerInventoryBroom(acScreen, x+containerWidth, y+containerHeight-30-3*18, mouseX, mouseY);
-        if (container instanceof GenericContainer || container instanceof ShulkerBoxContainer) {
-            ExtendedGuiChest.drawPlayerInventoryAllUp(acScreen, x+containerWidth, y+containerHeight-30-2*18, mouseX, mouseY);
+        ScreenWithHandler acScreen = (ScreenWithHandler) me;
+        ExtendedGuiChest.drawPlayerInventoryBroom(acScreen, x+backgroundWidth, y+backgroundHeight-30-3*18, mouseX, mouseY);
+        if (handler instanceof GenericContainerScreenHandler || handler instanceof ShulkerBoxScreenHandler) {
+            ExtendedGuiChest.drawPlayerInventoryAllUp(acScreen, x+backgroundWidth, y+backgroundHeight-30-2*18, mouseX, mouseY);
         }
     }
     
     @Inject(method="mouseClicked", at=@At("HEAD"), cancellable=true)
     public void EasierChests$checkMyButtons(double mouseX, double mouseY, int button, CallbackInfoReturnable cir) {
-        if (mouseX >= x+containerWidth && mouseX <= x+containerWidth+18) {
+        if (mouseX >= x+backgroundWidth && mouseX <= x+backgroundWidth+18) {
             Screen me = this;       // work around Java compiler ...
-            AbstractContainerScreen acScreen = (AbstractContainerScreen) me;
-            if (mouseY >= y+containerHeight-30-3*18 && mouseY < y+containerHeight-30-2*18) {
+            ScreenWithHandler acScreen = (ScreenWithHandler) me;
+            if (mouseY >= y+backgroundHeight-30-3*18 && mouseY < y+backgroundHeight-30-2*18) {
                 ExtendedGuiChest.sortInventory(this, false, this.playerInventory);
                 cir.setReturnValue(true);
-            } else if (mouseY >= y+containerHeight-30-3*18 && mouseY < y+containerHeight-30-1*18
-                    && ( container instanceof GenericContainer || container instanceof ShulkerBoxContainer)) {
+            } else if (mouseY >= y+backgroundHeight-30-3*18 && mouseY < y+backgroundHeight-30-1*18
+                    && ( handler instanceof GenericContainerScreenHandler || handler instanceof ShulkerBoxScreenHandler)) {
                 ExtendedGuiChest.moveMatchingItems(acScreen, false);
                 cir.setReturnValue(true);
             }
@@ -103,13 +103,13 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
     @Inject(method="keyPressed", at=@At("HEAD"), cancellable=true)
     public void EasierChests$keyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable cir) {
         Screen me = this;       // work around Java compiler ...
-        AbstractContainerScreen acScreen = (AbstractContainerScreen) me;
+        ScreenWithHandler acScreen = (ScreenWithHandler) me;
         if (EasierChests.keySortPlInv.matchesKey(keyCode, scanCode)) {
             ExtendedGuiChest.sortInventory(this, false, this.playerInventory);
             cir.setReturnValue(true);
         }
         if (EasierChests.keyMoveToChest.matchesKey(keyCode, scanCode)
-                && ( container instanceof GenericContainer || container instanceof ShulkerBoxContainer)) {
+                && ( handler instanceof GenericContainerScreenHandler || handler instanceof ShulkerBoxScreenHandler)) {
                     ExtendedGuiChest.moveMatchingItems(acScreen, false);
                     cir.setReturnValue(true);
         }
