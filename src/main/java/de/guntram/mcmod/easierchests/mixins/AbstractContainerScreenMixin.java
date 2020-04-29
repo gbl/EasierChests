@@ -5,7 +5,8 @@ import de.guntram.mcmod.easierchests.ExtendedGuiChest;
 import de.guntram.mcmod.easierchests.interfaces.SlotClicker;
 import net.minecraft.client.gui.screen.Screen;
 import static net.minecraft.client.gui.screen.Screen.hasAltDown;
-import net.minecraft.client.gui.screen.ingame.ScreenWithHandler;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.PlayerScreenHandler;
@@ -21,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(ScreenWithHandler.class)
+@Mixin(HandledScreen.class)
 public abstract class AbstractContainerScreenMixin extends Screen implements SlotClicker {
 
     @Shadow protected void onMouseClick(Slot slot, int invSlot, int button, SlotActionType slotActionType) {}
@@ -68,19 +69,19 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
     }
     
     @Inject(method="drawSlot", at=@At("RETURN"))
-    public void EasierChests$DrawSlotIndex(Slot slot, CallbackInfo ci) {
+    public void EasierChests$DrawSlotIndex(MatrixStack stack, Slot slot, CallbackInfo ci) {
         if (hasAltDown()) {
-            this.textRenderer.draw(Integer.toString(slot.id), slot.xPosition, slot.yPosition, 0x808090);
+            this.textRenderer.draw(stack, Integer.toString(slot.id), slot.x, slot.y, 0x808090);
         }
     }
     
     @Inject(method="render", at=@At(value="INVOKE", target="Lcom/mojang/blaze3d/systems/RenderSystem;disableRescaleNormal()V"))
-    public void EasierChests$renderSpecialButtons(int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    public void EasierChests$renderSpecialButtons(MatrixStack stack, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         Screen me = this;       // work around Java compiler ...
-        ScreenWithHandler acScreen = (ScreenWithHandler) me;
-        ExtendedGuiChest.drawPlayerInventoryBroom(acScreen, x+backgroundWidth, y+backgroundHeight-30-3*18, mouseX, mouseY);
+        HandledScreen acScreen = (HandledScreen) me;
+        ExtendedGuiChest.drawPlayerInventoryBroom(stack, acScreen, x+backgroundWidth, y+backgroundHeight-30-3*18, mouseX, mouseY);
         if (handler instanceof GenericContainerScreenHandler || handler instanceof ShulkerBoxScreenHandler) {
-            ExtendedGuiChest.drawPlayerInventoryAllUp(acScreen, x+backgroundWidth, y+backgroundHeight-30-2*18, mouseX, mouseY);
+            ExtendedGuiChest.drawPlayerInventoryAllUp(stack, acScreen, x+backgroundWidth, y+backgroundHeight-30-2*18, mouseX, mouseY);
         }
     }
     
@@ -88,7 +89,7 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
     public void EasierChests$checkMyButtons(double mouseX, double mouseY, int button, CallbackInfoReturnable cir) {
         if (mouseX >= x+backgroundWidth && mouseX <= x+backgroundWidth+18) {
             Screen me = this;       // work around Java compiler ...
-            ScreenWithHandler acScreen = (ScreenWithHandler) me;
+            HandledScreen acScreen = (HandledScreen) me;
             if (mouseY >= y+backgroundHeight-30-3*18 && mouseY < y+backgroundHeight-30-2*18) {
                 ExtendedGuiChest.sortInventory(this, false, this.playerInventory);
                 cir.setReturnValue(true);
@@ -103,7 +104,7 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
     @Inject(method="keyPressed", at=@At("HEAD"), cancellable=true)
     public void EasierChests$keyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable cir) {
         Screen me = this;       // work around Java compiler ...
-        ScreenWithHandler acScreen = (ScreenWithHandler) me;
+        HandledScreen acScreen = (HandledScreen) me;
         if (EasierChests.keySortPlInv.matchesKey(keyCode, scanCode)) {
             ExtendedGuiChest.sortInventory(this, false, this.playerInventory);
             cir.setReturnValue(true);

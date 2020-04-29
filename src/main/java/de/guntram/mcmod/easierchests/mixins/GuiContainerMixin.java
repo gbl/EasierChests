@@ -2,7 +2,7 @@ package de.guntram.mcmod.easierchests.mixins;
 
 import de.guntram.mcmod.easierchests.ExtendedGuiChest;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screens;
+import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.ShulkerBoxScreenHandler;
@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(Screens.class)
+@Mixin(HandledScreens.class)
 public class GuiContainerMixin {
     
     private static final Logger LOGGER = LogManager.getLogger();
@@ -22,7 +22,7 @@ public class GuiContainerMixin {
     @Inject(method="open", at=@At("HEAD"), cancellable = true)
     private static void checkChestScreen(ScreenHandlerType type, MinecraftClient client, 
             int any, Text component, CallbackInfo ci) {
-        LOGGER.debug("Trying to open container: "+type+" with name "+component.asFormattedString());
+        LOGGER.debug("Trying to open container: "+type+" with name "+component.getString());
         if (type == ScreenHandlerType.GENERIC_9X1 
         ||  type == ScreenHandlerType.GENERIC_9X2
         ||  type == ScreenHandlerType.GENERIC_9X3

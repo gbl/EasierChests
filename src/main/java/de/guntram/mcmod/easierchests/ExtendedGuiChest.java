@@ -4,8 +4,8 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.guntram.mcmod.easierchests.interfaces.SlotClicker;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.ScreenWithHandler;
-import net.minecraft.client.resource.language.I18n;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.EnchantedBookItem;
@@ -19,6 +19,7 @@ import net.minecraft.screen.ShulkerBoxScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 /*
@@ -27,7 +28,7 @@ import net.minecraft.util.Identifier;
  * that are in those classes (and are identical ...) ourselves. Doh.
  */
 
-public class ExtendedGuiChest extends ScreenWithHandler
+public class ExtendedGuiChest extends HandledScreen
 {
     private final int inventoryRows;
     private static final Identifier ICONS=new Identifier(EasierChests.MODID, "textures/icons.png");
@@ -58,55 +59,55 @@ public class ExtendedGuiChest extends ScreenWithHandler
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks)
+    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks)
     {
-        this.renderBackground();
-        super.render(mouseX, mouseY, partialTicks);
-        this.drawMouseoverTooltip(mouseX, mouseY);
+        this.renderBackground(stack);
+        super.render(stack, mouseX, mouseY, partialTicks);
+        this.drawMouseoverTooltip(stack, mouseX, mouseY);
     }
 
     @Override
-    protected void drawForeground(int mouseX, int mouseY)
+    protected void drawForeground(MatrixStack stack, int mouseX, int mouseY)
     {
-        this.textRenderer.draw(this.title.asFormattedString(), 8.0F, 6.0F, 4210752);
-        this.textRenderer.draw(this.playerInventory.getDisplayName().asFormattedString(), 8.0F, (float)(this.backgroundHeight - 96 + 2), 4210752);
+        this.textRenderer.draw(stack, this.title.getString(), 8.0F, 6.0F, 4210752);
+        this.textRenderer.draw(stack, this.playerInventory.getDisplayName().getString(), 8.0F, (float)(this.backgroundHeight - 96 + 2), 4210752);
     }
 
     /*
      * Draws the background layer of this container (behind the items).
      */
     @Override
-    protected void drawBackground(float partialTicks, int mouseX, int mouseY)
+    protected void drawBackground(MatrixStack stack, float partialTicks, int mouseX, int mouseY)
     {
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.client.getTextureManager().bindTexture(background);
         if (separateBlits) {
-            this.blit(x, y, 0, 0, this.backgroundWidth, this.inventoryRows * 18 + 17);
-            this.blit(x, y + this.inventoryRows * 18 + 17, 0, 126, this.backgroundWidth, 96);
+            this.drawTexture(stack, x, y, 0, 0, this.backgroundWidth, this.inventoryRows * 18 + 17);
+            this.drawTexture(stack, x, y + this.inventoryRows * 18 + 17, 0, 126, this.backgroundWidth, 96);
         } else {
-            this.blit(x, y, 0, 0, this.backgroundWidth, this.backgroundHeight);
+            this.drawTexture(stack, x, y, 0, 0, this.backgroundWidth, this.backgroundHeight);
         }
 
         GlStateManager.enableBlend();
         this.client.getTextureManager().bindTexture(ICONS);
 
         for (int i=0; i<9; i++) {
-            this.drawTexturedModalRectWithMouseHighlight(x+7+i*18,    y+-18,                          1*18, 2*18, 18, 18, mouseX, mouseY);       // arrow down above chests
-            this.drawTexturedModalRectWithMouseHighlight(x+7+i*18,    y+40+(this.inventoryRows+4)*18, 9*18, 2*18, 18, 18, mouseX, mouseY);       // arrow up below player inv
+            this.drawTexturedModalRectWithMouseHighlight(stack, x+7+i*18,    y+-18,                          1*18, 2*18, 18, 18, mouseX, mouseY);       // arrow down above chests
+            this.drawTexturedModalRectWithMouseHighlight(stack, x+7+i*18,    y+40+(this.inventoryRows+4)*18, 9*18, 2*18, 18, 18, mouseX, mouseY);       // arrow up below player inv
         }
         int rowsToDrawDownArrow=inventoryRows;
         if (inventoryRows>6 && !ConfigurationHandler.allowExtraLargeChests())
             rowsToDrawDownArrow=6;
         for (int i=0; i<rowsToDrawDownArrow; i++) {
-            this.drawTexturedModalRectWithMouseHighlight(x+ -18,      y+17+i*18,                      1*18, 2*18, 18, 18, mouseX, mouseY);       // arrow down left of chest
+            this.drawTexturedModalRectWithMouseHighlight(stack, x+ -18,      y+17+i*18,                      1*18, 2*18, 18, 18, mouseX, mouseY);       // arrow down left of chest
         }
         for (int i=0; i<4; i++) {
-            this.drawTexturedModalRectWithMouseHighlight(x+ -18,      y+28+(i+this.inventoryRows)*18, 9*18, 2*18, 18, 18, mouseX, mouseY);       // arrow up left of player inv
+            this.drawTexturedModalRectWithMouseHighlight(stack, x+ -18,      y+28+(i+this.inventoryRows)*18, 9*18, 2*18, 18, 18, mouseX, mouseY);       // arrow up left of player inv
         }
 
-        this.drawTexturedModalRectWithMouseHighlight(x+this.backgroundWidth, y+17,                           
+        this.drawTexturedModalRectWithMouseHighlight(stack, x+this.backgroundWidth, y+17,                           
                 11*18, 0*18, 18, 18, mouseX, mouseY);       // broom chest
-        this.drawTexturedModalRectWithMouseHighlight(x+this.backgroundWidth, y+17+18,
+        this.drawTexturedModalRectWithMouseHighlight(stack, x+this.backgroundWidth, y+17+18,
                 0 *18, 2*18, 18, 18, mouseX, mouseY);       // all down chest
         
         GlStateManager.disableBlend();
@@ -114,34 +115,34 @@ public class ExtendedGuiChest extends ScreenWithHandler
         for (int i=0; i<36; i++) {
             if (!hasShiftDown() && FrozenSlotDatabase.isSlotFrozen(i)) {
                 Slot slot = this.handler.slots.get(slotIndexFromPlayerInventoryIndex(i));
-                this.blit(x+slot.xPosition, y+slot.yPosition, 7*18+1, 3*18+1, 16, 16);               // stop sign
+                this.drawTexture(stack, x+slot.x, y+slot.y, 7*18+1, 3*18+1, 16, 16);               // stop sign
             }
         }
         
-        myTooltip(x+this.backgroundWidth, y+17,  18, 18, mouseX, mouseY, I18n.translate("easierchests.sortchest"));
-        myTooltip(x+this.backgroundWidth, y+17+18, 18, 18, mouseX, mouseY, I18n.translate("easierchests.matchdown"));
+        myTooltip(stack, x+this.backgroundWidth, y+17,  18, 18, mouseX, mouseY, new TranslatableText("easierchests.sortchest"));
+        myTooltip(stack, x+this.backgroundWidth, y+17+18, 18, 18, mouseX, mouseY, new TranslatableText("easierchests.matchdown"));
     }
 
-    public static void drawPlayerInventoryBroom(ScreenWithHandler screen, int x, int y, int mouseX, int mouseY) {
+    public static void drawPlayerInventoryBroom(MatrixStack stack, HandledScreen screen, int x, int y, int mouseX, int mouseY) {
         MinecraftClient.getInstance().getTextureManager().bindTexture(ICONS);
-        drawTexturedModalRectWithMouseHighlight(screen, x, y, 11*18, 0*18, 18, 18, mouseX, mouseY);
-        myTooltip(screen, x, y, 18, 18, mouseX, mouseY, I18n.translate("easierchests.sortplayer"));
+        drawTexturedModalRectWithMouseHighlight(screen, stack, x, y, 11*18, 0*18, 18, 18, mouseX, mouseY);
+        myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, new TranslatableText("easierchests.sortplayer"));
     }
     
-    public static void drawPlayerInventoryAllUp(ScreenWithHandler screen, int x, int y, int mouseX, int mouseY) {
+    public static void drawPlayerInventoryAllUp(MatrixStack stack, HandledScreen screen, int x, int y, int mouseX, int mouseY) {
         MinecraftClient.getInstance().getTextureManager().bindTexture(ICONS);
-        drawTexturedModalRectWithMouseHighlight(screen, x, y,  8*18, 2*18, 18, 18, mouseX, mouseY);
-        myTooltip(screen, x, y, 18, 18, mouseX, mouseY, I18n.translate("easierchests.matchup"));
+        drawTexturedModalRectWithMouseHighlight(screen, stack, x, y,  8*18, 2*18, 18, 18, mouseX, mouseY);
+        myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, new TranslatableText("easierchests.matchup"));
     }
 
-    private void drawTexturedModalRectWithMouseHighlight(int screenx, int screeny, int textx, int texty, int sizex, int sizey, int mousex, int mousey) {
-        drawTexturedModalRectWithMouseHighlight(this, screenx, screeny, textx, texty, sizex, sizey, mousex, mousey);
+    private void drawTexturedModalRectWithMouseHighlight(MatrixStack stack, int screenx, int screeny, int textx, int texty, int sizex, int sizey, int mousex, int mousey) {
+        drawTexturedModalRectWithMouseHighlight(this, stack, screenx, screeny, textx, texty, sizex, sizey, mousex, mousey);
     }
     
-    private static void drawTexturedModalRectWithMouseHighlight(ScreenWithHandler screen, int screenx, int screeny, int textx, int texty, int sizex, int sizey, int mousex, int mousey) {
+    private static void drawTexturedModalRectWithMouseHighlight(HandledScreen screen, MatrixStack stack, int screenx, int screeny, int textx, int texty, int sizex, int sizey, int mousex, int mousey) {
         if (mousex >= screenx && mousex < screenx+sizex && mousey >= screeny && mousey < screeny+sizey) {
             RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
-            screen.blit(screenx, screeny, textx, texty, sizex, sizey);
+            screen.drawTexture(stack, screenx, screeny, textx, texty, sizex, sizey);
         } else {
             if (ConfigurationHandler.toneDownButtons()) {
                 RenderSystem.enableBlend();
@@ -150,23 +151,23 @@ public class ExtendedGuiChest extends ScreenWithHandler
             if (ConfigurationHandler.halfSizeButtons()) {
                 RenderSystem.pushMatrix();
                 RenderSystem.scaled(0.5, 0.5, 0.5);
-                screen.blit(screenx*2+sizex/2, screeny*2+sizey/2, textx, texty, sizex, sizey);
+                screen.drawTexture(stack, screenx*2+sizex/2, screeny*2+sizey/2, textx, texty, sizex, sizey);
                 RenderSystem.popMatrix();
             }
             else {
-                screen.blit(screenx, screeny, textx, texty, sizex, sizey);
+                screen.drawTexture(stack, screenx, screeny, textx, texty, sizex, sizey);
             }
         }
         RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
-    private void myTooltip(int screenx, int screeny, int sizex, int sizey, int mousex, int mousey, String tooltip) {
-        myTooltip(this, screenx, screeny, sizex, sizey, mousex, mousey, tooltip);
+    private void myTooltip(MatrixStack stack, int screenx, int screeny, int sizex, int sizey, int mousex, int mousey, Text tooltip) {
+        myTooltip(this, stack, screenx, screeny, sizex, sizey, mousex, mousey, tooltip);
     }
 
-    private static void myTooltip(ScreenWithHandler screen, int screenx, int screeny, int sizex, int sizey, int mousex, int mousey, String tooltip) {
+    private static void myTooltip(HandledScreen screen, MatrixStack stack, int screenx, int screeny, int sizex, int sizey, int mousex, int mousey, Text tooltip) {
         if (tooltip!=null && mousex>=screenx && mousex<=screenx+sizex && mousey>=screeny && mousey <= screeny+sizey) {
-            screen.renderTooltip(tooltip, mousex, mousey);
+            screen.renderTooltip(stack, tooltip, mousex, mousey);
         }
     }
 
@@ -227,7 +228,7 @@ public class ExtendedGuiChest extends ScreenWithHandler
             if (invIndex==-1)
                 continue;
             Slot slot = this.handler.slots.get(i);
-            if (isPointWithinBounds(slot.xPosition, slot.yPosition, 16, 16, mouseX, mouseY)) {
+            if (isPointWithinBounds(slot.x, slot.y, 16, 16, mouseX, mouseY)) {
                 FrozenSlotDatabase.setSlotFrozen(invIndex, !FrozenSlotDatabase.isSlotFrozen(invIndex));
             }
         }
@@ -255,11 +256,11 @@ public class ExtendedGuiChest extends ScreenWithHandler
     }
 
     public static void sortInventory(SlotClicker screen, boolean isChest, Inventory inv) {
-        int size=isChest ? inv.getInvSize() : 36;     // player's Inventory has 41 items which includes armor and left hand, but we don't want these.
+        int size=isChest ? inv.size() : 36;     // player's Inventory has 41 items which includes armor and left hand, but we don't want these.
         if (size>9*6 && !ConfigurationHandler.allowExtraLargeChests())
             size=9*6;
         for (int toSlot=0; toSlot<size; toSlot++) {
-            ItemStack toStack=inv.getInvStack(toSlot);
+            ItemStack toStack=inv.getStack(toSlot);
             String targetItemName=toStack.getTranslationKey();
             if (toStack.getItem() == Items.AIR) {
                 if (!isChest && toSlot<9)
@@ -274,10 +275,10 @@ public class ExtendedGuiChest extends ScreenWithHandler
                 for (int fromSlot=toSlot+1; fromSlot<size; fromSlot++) {
                     if (!isChest && !hasShiftDown()&& FrozenSlotDatabase.isSlotFrozen(fromSlot))
                         continue;
-                    ItemStack slotStack=inv.getInvStack(fromSlot);
+                    ItemStack slotStack=inv.getStack(fromSlot);
                     if (slotStack.getItem()==Items.AIR)
                         continue;
-                    String slotItem=inv.getInvStack(fromSlot).getTranslationKey();
+                    String slotItem=inv.getStack(fromSlot).getTranslationKey();
                     if (slotItem.compareToIgnoreCase(targetItemName)<0) {
                         targetItemName=slotItem;
                     }
@@ -299,8 +300,8 @@ public class ExtendedGuiChest extends ScreenWithHandler
                         continue;
                     }
                 }
-                toStack=inv.getInvStack(toSlot);
-                ItemStack fromStack=inv.getInvStack(fromSlot);
+                toStack=inv.getStack(toSlot);
+                ItemStack fromStack=inv.getStack(fromSlot);
                 if (fromStack.getTranslationKey().equals(targetItemName)
                 &&  (!toStack.getTranslationKey().equals(targetItemName)
                     ||    stackShouldGoBefore(fromStack, toStack))) {
@@ -369,7 +370,7 @@ public class ExtendedGuiChest extends ScreenWithHandler
         moveMatchingItems(this, isChest);
     }
     
-    public static void moveMatchingItems(ScreenWithHandler screen, boolean isChestToPlayer) {
+    public static void moveMatchingItems(HandledScreen screen, boolean isChestToPlayer) {
         // System.out.println("move matching from "+(isChest ? "chest" : "player"));
         Inventory from, to;
         int fromSize, toSize;
@@ -386,11 +387,11 @@ public class ExtendedGuiChest extends ScreenWithHandler
 
         // use 36 for player inventory size so we won't use armor/2h slots
         if (isChestToPlayer) {
-            from = containerInventory;            fromSize=from.getInvSize();
+            from = containerInventory;            fromSize=from.size();
             to   = minecraft.player.inventory;    toSize  =36;
         } else {
             from = minecraft.player.inventory;    fromSize=36;
-            to   = containerInventory;            toSize  =to.getInvSize();
+            to   = containerInventory;            toSize  =to.size();
         }
         if (!ConfigurationHandler.allowExtraLargeChests()) {
             if (fromSize>9*6)   fromSize=9*6;
@@ -399,7 +400,7 @@ public class ExtendedGuiChest extends ScreenWithHandler
         for (int i=0; i<fromSize; i++) {
             if (!isChestToPlayer && !hasShiftDown() && FrozenSlotDatabase.isSlotFrozen(i))
                 continue;
-            ItemStack fromStack = from.getInvStack(i);
+            ItemStack fromStack = from.getStack(i);
             int slot;
             if (isChestToPlayer) {
                 slot=i;
@@ -407,7 +408,7 @@ public class ExtendedGuiChest extends ScreenWithHandler
                 slot=((SlotClicker)screen).EasierChests$slotIndexfromPlayerInventoryIndex(i);
             }
             for (int j=0; j<toSize; j++) {
-                ItemStack toStack = to.getInvStack(j);
+                ItemStack toStack = to.getStack(j);
                 if (fromStack.isItemEqual(toStack)
                 &&  ItemStack.areTagsEqual(fromStack, toStack)) {
                     // System.out.println("  from["+i+"] is same as to["+j+"] ("+toStack.getDisplayName()+"), clicking "+slot);

@@ -21,6 +21,6 @@ public class GuiActionConfirmDebugMixin {
     }
     @Inject(method="onInventory", at=@At("HEAD"))
     private void dumpInventoryInfo(InventoryS2CPacket packet, CallbackInfo ci) {
-        LOGGER.debug(() -> "inventory: guiid="+packet.getGuiId()+", slotcount="+packet.getSlotStacks().size());
+        LOGGER.debug(() -> "inventory: syncid="+packet.getSyncId()+", slotcount="+packet.getContents().size());
     }
 }
