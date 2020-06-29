@@ -22,7 +22,7 @@
     },    
     "name": "EasierChests",
     "description": "Move stuff between inventory and chests, and sort them",
-    "icon": "pack.png",
+    "icon": "icon.png",
     "authors": [ "Giselbaer" ],
     "contact": {
         "homepage": "https://minecraft.curseforge.com/projects/easierchests",
