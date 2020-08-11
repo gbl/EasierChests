@@ -38,9 +38,13 @@ public class ConfigurationHandler implements ModConfigurationHandler {
     }
     
     private void loadConfig() {
-        extraLargeChests=config.getBoolean("Allow extra large chests", Configuration.CATEGORY_CLIENT, false, "Allow chests to have more than 54 entries");
-        halfSizeButtons=config.getBoolean("Half button size", Configuration.CATEGORY_CLIENT, false, "Half button size unless mouse hovers over them");
-        toneDownButtons=config.getBoolean("Transparent buttons", Configuration.CATEGORY_CLIENT, true, "Make buttons transparent unless mouse hovers over them");
+        
+        config.migrate("Allow extra large chests", "easierchests.config.largechests");
+        config.migrate("Half button size", "easierchests.config.halfsize");
+        config.migrate("Transparent buttons", "easierchests.config.transparent");
+        extraLargeChests=config.getBoolean("easierchests.config.largechests", Configuration.CATEGORY_CLIENT, false, "easierchests.config.tt.largechests");
+        halfSizeButtons=config.getBoolean("easierchests.config.halfsize", Configuration.CATEGORY_CLIENT, false, "easierchests.config.tt.halfsize");
+        toneDownButtons=config.getBoolean("easierchests.config.transparent", Configuration.CATEGORY_CLIENT, true, "easierchests.config.tt.transparent");
         
         if (config.hasChanged())
             config.save();

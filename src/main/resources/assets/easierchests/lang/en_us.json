@@ -8,5 +8,14 @@
     "key.easierchests.sortchest" : "Sort chest",
     "key.easierchests.sortplayer": "Sort inventory",
     "key.easierchests.matchdown": "Move matches to player",
-    "key.easierchests.matchup": "Move matches to chest"
+    "key.easierchests.matchup": "Move matches to chest",
+    
+    
+    "easierchests.config.largechests": "Allow extra large chests",
+    "easierchests.config.halfsize": "Half button size",
+    "easierchests.config.transparent": "Transparent buttons",
+    
+    "easierchests.config.tt.largechests": "Allow chests to have more than 54 entries",
+    "easierchests.config.tt.halfsize": "Half button size unless mouse hovers over them",
+    "easierchests.config.tt.transparent": "Make buttons transparent unless mouse hovers over them"
 }
