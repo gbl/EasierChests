@@ -20,6 +20,7 @@ public class ConfigurationHandler implements ModConfigurationHandler {
     private boolean extraLargeChests;
     private boolean halfSizeButtons;
     private boolean toneDownButtons;
+    private String matchHighlightColor;
 
     public void load(final File configFile) {
         if (config == null) {
@@ -45,6 +46,7 @@ public class ConfigurationHandler implements ModConfigurationHandler {
         extraLargeChests=config.getBoolean("easierchests.config.largechests", Configuration.CATEGORY_CLIENT, false, "easierchests.config.tt.largechests");
         halfSizeButtons=config.getBoolean("easierchests.config.halfsize", Configuration.CATEGORY_CLIENT, false, "easierchests.config.tt.halfsize");
         toneDownButtons=config.getBoolean("easierchests.config.transparent", Configuration.CATEGORY_CLIENT, true, "easierchests.config.tt.transparent");
+        matchHighlightColor=config.getString("easierchests.config.highlight", Configuration.CATEGORY_CLIENT, "4000ff00", "easierchests.config.tt.highlight");
         
         if (config.hasChanged())
             config.save();
@@ -69,5 +71,9 @@ public class ConfigurationHandler implements ModConfigurationHandler {
     
     public static boolean halfSizeButtons() {
         return getInstance().halfSizeButtons;
+    }
+    
+    public static String getHighlightColor() {
+        return getInstance().matchHighlightColor;
     }
 }

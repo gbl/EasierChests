@@ -1,12 +1,19 @@
-{   
-    "key.categories.easierchests":"更容易的箱子",
-    "easierchests.sortchest" : "排序箱子",
+{
+    "key.categories.easierchests": "更容易的箱子",
+    "easierchests.sortchest": "排序箱子",
     "easierchests.sortplayer": "排序物品栏",
     "easierchests.matchdown": "移动匹配物品到玩家",
     "easierchests.matchup": "移动匹配物品到箱子",
-
-    "key.easierchests.sortchest" : "排序箱子",
+    "key.easierchests.sortchest": "排序箱子",
     "key.easierchests.sortplayer": "排序物品栏",
     "key.easierchests.matchdown": "移动匹配物品到玩家",
-    "key.easierchests.matchup": "移动匹配物品到箱子"
+    "key.easierchests.matchup": "移动匹配物品到箱子",
+    "easierchests.config.largechests": "Allow extra large chests",
+    "easierchests.config.halfsize": "Half button size",
+    "easierchests.config.transparent": "Transparent buttons",
+    "easierchests.config.highlight": "Highlight color (ARGB)",
+    "easierchests.config.tt.largechests": "Allow chests to have more than 54 entries",
+    "easierchests.config.tt.halfsize": "Half button size unless mouse hovers over them",
+    "easierchests.config.tt.transparent": "Make buttons transparent unless mouse hovers over them",
+    "easierchests.config.tt.highlight": "Hex colors, 2 bytes each: transparency, red, green, blue"
 }

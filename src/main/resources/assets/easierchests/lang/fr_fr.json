@@ -1,0 +1,19 @@
+{
+    "key.categories.easierchests": "Coffres plus faciles",
+    "easierchests.sortchest": "Trier le coffre",
+    "easierchests.sortplayer": "Trier l'inventaire",
+    "easierchests.matchdown": "Déplacer les correspondances vers le joueur",
+    "easierchests.matchup": "Déplacer les correspondances vers le coffre",
+    "key.easierchests.sortchest": "Trier le coffre",
+    "key.easierchests.sortplayer": "Trier l'inventaire",
+    "key.easierchests.matchdown": "Déplacer les correspondances vers le joueur",
+    "key.easierchests.matchup": "Déplacer les correspondances vers le coffre",
+    "easierchests.config.largechests": "Autoriser les coffres extra larges",
+    "easierchests.config.halfsize": "Boutons de demi-taille",
+    "easierchests.config.transparent": "Boutons transparents",
+    "easierchests.config.highlight": "Highlight color (ARGB)",
+    "easierchests.config.tt.largechests": "Permettre aux coffres d'avoir plus de 54 entrées",
+    "easierchests.config.tt.halfsize": "Boutons de demi-taille, sauf si la souris passe dessus",
+    "easierchests.config.tt.transparent": "Boutons transparents, sauf si la souris passe dessus",
+    "easierchests.config.tt.highlight": "Hex colors, 2 bytes each: transparency, red, green, blue"
+}

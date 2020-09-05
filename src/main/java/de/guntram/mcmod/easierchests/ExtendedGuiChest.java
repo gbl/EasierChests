@@ -4,7 +4,10 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.guntram.mcmod.easierchests.interfaces.SlotClicker;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -18,9 +21,11 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ShulkerBoxScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
+import org.lwjgl.glfw.GLFW;
 
 /*
  * Warning - this code should extend ContainerScreen54 AND ShulkerBoxScreen,
@@ -35,6 +40,8 @@ public class ExtendedGuiChest extends HandledScreen
     private final Identifier background;
     private final Inventory containerInventory;
     private final boolean separateBlits;
+    private TextFieldWidget searchWidget;
+    private static String searchText;
     
     public ExtendedGuiChest(GenericContainerScreenHandler container, PlayerInventory lowerInv, Text title,
             int rows)
@@ -57,13 +64,21 @@ public class ExtendedGuiChest extends HandledScreen
         background = new Identifier("minecraft", "textures/gui/container/shulker_box.png");
         separateBlits=false;
     }
+    
+    @Override
+    public void init() {
+        super.init();
+        searchWidget = new TextFieldWidget(textRenderer, x+80, y+3, 80, 12, new LiteralText("Search"));
+        searchWidget.setText(searchText);
+    }
 
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks)
     {
-        this.renderBackground(stack);
+        renderBackground(stack);
         super.render(stack, mouseX, mouseY, partialTicks);
-        this.drawMouseoverTooltip(stack, mouseX, mouseY);
+        drawMouseoverTooltip(stack, mouseX, mouseY);
+        searchWidget.render(stack, mouseX, mouseY, 0);
     }
 
     @Override
@@ -116,6 +131,18 @@ public class ExtendedGuiChest extends HandledScreen
             if (!hasShiftDown() && FrozenSlotDatabase.isSlotFrozen(i)) {
                 Slot slot = this.handler.slots.get(slotIndexFromPlayerInventoryIndex(i));
                 this.drawTexture(stack, x+slot.x, y+slot.y, 7*18+1, 3*18+1, 16, 16);               // stop sign
+            }
+        }
+        String search = searchWidget.getText().toLowerCase();
+        if (!search.isEmpty()) {
+            int highlight = (int) Long.parseLong(ConfigurationHandler.getHighlightColor().toUpperCase(), 16);
+            for (int i=0; i<this.handler.slots.size(); i++) {
+                Slot slot = this.handler.slots.get(i);
+                if (I18n.translate(slot.getStack().getItem().getTranslationKey()).toLowerCase().contains(search)) {
+                    // this.drawTexture(stack, x+slot.x, y+slot.y, 4*18+1, 0*18+1, 16, 16);
+                    GlStateManager.enableAlphaTest();
+                    DrawableHelper.fill(stack, x+slot.x-1, y+slot.y-1, x+slot.x+18-1, y+slot.y+18-1, highlight);
+                }
             }
         }
         
@@ -173,6 +200,9 @@ public class ExtendedGuiChest extends HandledScreen
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, final int mouseButton) {
+        if (searchWidget.mouseClicked(mouseX, mouseY, mouseButton)) {
+            return true;
+        }
         super.mouseClicked(mouseX, mouseY, mouseButton);
         if (mouseButton==0) {
             checkForMyButtons(mouseX, mouseY);
@@ -216,10 +246,34 @@ public class ExtendedGuiChest extends HandledScreen
     
     @Override
     public boolean keyPressed(int keycode, int scancode, int modifiers) {
-        super.keyPressed(keycode, scancode, modifiers);
-        if (EasierChests.keySortChest.matchesKey(keycode, scancode))    sortInventory(true);
-        if (EasierChests.keyMoveToPlInv.matchesKey(keycode, scancode))  moveMatchingItems(true);
-        return true;
+        if (keycode == GLFW.GLFW_KEY_ESCAPE) {
+            return super.keyPressed(keycode, scancode, modifiers);
+        }
+        if (searchWidget.isActive()) {
+            return searchWidget.keyPressed(keycode, scancode, modifiers);
+        }
+        if (EasierChests.keySortChest.matchesKey(keycode, scancode)) {
+            sortInventory(true);
+            return true;
+        } else if (EasierChests.keyMoveToPlInv.matchesKey(keycode, scancode)) {
+            moveMatchingItems(true);
+            return true;
+        }
+        return super.keyPressed(keycode, scancode, modifiers);
+    }
+    
+    @Override
+    public boolean charTyped(char chr, int keyCode) {
+        if (searchWidget.isActive()) {
+            return searchWidget.charTyped(chr, keyCode);
+        }
+        return super.charTyped(chr, keyCode);
+    }
+    
+    @Override
+    public void onClose() {
+        searchText=searchWidget.getText();
+        super.onClose();
     }
     
     void checkForToggleFrozen(double mouseX, double mouseY) {
