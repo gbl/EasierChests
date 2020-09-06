@@ -12,6 +12,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.EnchantedBookItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
@@ -77,8 +78,8 @@ public class ExtendedGuiChest extends HandledScreen
     {
         renderBackground(stack);
         super.render(stack, mouseX, mouseY, partialTicks);
-        drawMouseoverTooltip(stack, mouseX, mouseY);
         searchWidget.render(stack, mouseX, mouseY, 0);
+        drawMouseoverTooltip(stack, mouseX, mouseY);
     }
 
     @Override
@@ -138,7 +139,11 @@ public class ExtendedGuiChest extends HandledScreen
             int highlight = (int) Long.parseLong(ConfigurationHandler.getHighlightColor().toUpperCase(), 16);
             for (int i=0; i<this.handler.slots.size(); i++) {
                 Slot slot = this.handler.slots.get(i);
-                if (I18n.translate(slot.getStack().getItem().getTranslationKey()).toLowerCase().contains(search)) {
+                Item item = slot.getStack().getItem();
+                if (item == Items.AIR) {
+                    continue;
+                }
+                if (I18n.translate(item.getTranslationKey()).toLowerCase().contains(search)) {
                     // this.drawTexture(stack, x+slot.x, y+slot.y, 4*18+1, 0*18+1, 16, 16);
                     GlStateManager.enableAlphaTest();
                     DrawableHelper.fill(stack, x+slot.x-1, y+slot.y-1, x+slot.x+18-1, y+slot.y+18-1, highlight);
