@@ -80,39 +80,67 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
         Screen me = this;       // work around Java compiler ...
         HandledScreen acScreen = (HandledScreen) me;
         ExtendedGuiChest.drawPlayerInventoryBroom(stack, acScreen, x+backgroundWidth, y+backgroundHeight-30-3*18, mouseX, mouseY);
-        if (handler instanceof GenericContainerScreenHandler || handler instanceof ShulkerBoxScreenHandler) {
+        if (isSupportedScreenHandler(handler)) {
             ExtendedGuiChest.drawPlayerInventoryAllUp(stack, acScreen, x+backgroundWidth, y+backgroundHeight-30-2*18, mouseX, mouseY);
+            ExtendedGuiChest.drawChestInventoryBroom(stack, acScreen, x+backgroundWidth, y+17, mouseX, mouseY);
+            ExtendedGuiChest.drawChestInventoryAllDown(stack, acScreen, x+this.backgroundWidth, y+17+18, mouseX, mouseY);
         }
     }
     
     @Inject(method="mouseClicked", at=@At("HEAD"), cancellable=true)
     public void EasierChests$checkMyButtons(double mouseX, double mouseY, int button, CallbackInfoReturnable cir) {
         if (mouseX >= x+backgroundWidth && mouseX <= x+backgroundWidth+18) {
-            Screen me = this;       // work around Java compiler ...
-            HandledScreen acScreen = (HandledScreen) me;
+            HandledScreen HSthis = (HandledScreen) (Screen) this;
             if (mouseY >= y+backgroundHeight-30-3*18 && mouseY < y+backgroundHeight-30-2*18) {
                 ExtendedGuiChest.sortInventory(this, false, this.playerInventory);
                 cir.setReturnValue(true);
-            } else if (mouseY >= y+backgroundHeight-30-3*18 && mouseY < y+backgroundHeight-30-1*18
-                    && ( handler instanceof GenericContainerScreenHandler || handler instanceof ShulkerBoxScreenHandler)) {
-                ExtendedGuiChest.moveMatchingItems(acScreen, false);
-                cir.setReturnValue(true);
+            } 
+            if (isSupportedScreenHandler(handler)) {
+                if (mouseY >= y+backgroundHeight-30-3*18 && mouseY < y+backgroundHeight-30-1*18) {
+                    ExtendedGuiChest.moveMatchingItems(HSthis, false);
+                    cir.setReturnValue(true);
+                } else if (mouseY > y+17 && mouseY < y+17+18) {
+                    ExtendedGuiChest.sortInventory(this, true, handler.getSlot(0).inventory);
+                    cir.setReturnValue(true);
+                } else if (mouseY > y+17+18 && mouseY < y+17+36) {
+                    ExtendedGuiChest.moveMatchingItems(HSthis, true);
+                    cir.setReturnValue(true);
+                }
             }
         }
     }
     
     @Inject(method="keyPressed", at=@At("HEAD"), cancellable=true)
     public void EasierChests$keyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable cir) {
-        Screen me = this;       // work around Java compiler ...
-        HandledScreen acScreen = (HandledScreen) me;
+        HandledScreen acScreen = (HandledScreen)(Screen)this;
         if (EasierChests.keySortPlInv.matchesKey(keyCode, scanCode)) {
             ExtendedGuiChest.sortInventory(this, false, this.playerInventory);
             cir.setReturnValue(true);
         }
         if (EasierChests.keyMoveToChest.matchesKey(keyCode, scanCode)
-                && ( handler instanceof GenericContainerScreenHandler || handler instanceof ShulkerBoxScreenHandler)) {
+                && isSupportedScreenHandler(handler)) {
                     ExtendedGuiChest.moveMatchingItems(acScreen, false);
                     cir.setReturnValue(true);
         }
+        if (EasierChests.keySortChest.matchesKey(keyCode, scanCode)) {
+            ExtendedGuiChest.sortInventory(this, true, handler.getSlot(0).inventory);
+            cir.setReturnValue(true);
+        } else if (EasierChests.keyMoveToPlInv.matchesKey(keyCode, scanCode)) {
+            ExtendedGuiChest.moveMatchingItems(acScreen, true);
+            cir.setReturnValue(true);
+        }        
+    }
+    
+    public boolean isSupportedScreenHandler(ScreenHandler handler) {
+        if (handler instanceof GenericContainerScreenHandler || handler instanceof ShulkerBoxScreenHandler) {
+            return true;
+        }
+        // Can't use this because we have no dev jar so superclasses of BackpackScreenHandler are class_xxxx ...
+        // return handler instanceof BackpackScreenHandler;
+        if (handler.getClass().getSimpleName().equals("BackpackScreenHandler")) {
+            return true;
+        }
+        System.out.println("handler is a "+handler.getClass().getSimpleName());
+        return false;
     }
 }

@@ -18,7 +18,6 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.screen.GenericContainerScreenHandler;
-import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ShulkerBoxScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
@@ -121,11 +120,6 @@ public class ExtendedGuiChest extends HandledScreen
             this.drawTexturedModalRectWithMouseHighlight(stack, x+ -18,      y+28+(i+this.inventoryRows)*18, 9*18, 2*18, 18, 18, mouseX, mouseY);       // arrow up left of player inv
         }
 
-        this.drawTexturedModalRectWithMouseHighlight(stack, x+this.backgroundWidth, y+17,                           
-                11*18, 0*18, 18, 18, mouseX, mouseY);       // broom chest
-        this.drawTexturedModalRectWithMouseHighlight(stack, x+this.backgroundWidth, y+17+18,
-                0 *18, 2*18, 18, 18, mouseX, mouseY);       // all down chest
-        
         GlStateManager.disableBlend();
         this.client.getTextureManager().bindTexture(ICONS);      // because tooltip rendering will have changed the texture to letters
         for (int i=0; i<36; i++) {
@@ -150,9 +144,18 @@ public class ExtendedGuiChest extends HandledScreen
                 }
             }
         }
-        
-        myTooltip(stack, x+this.backgroundWidth, y+17,  18, 18, mouseX, mouseY, new TranslatableText("easierchests.sortchest"));
-        myTooltip(stack, x+this.backgroundWidth, y+17+18, 18, 18, mouseX, mouseY, new TranslatableText("easierchests.matchdown"));
+    }
+    
+    public static void drawChestInventoryBroom(MatrixStack stack, HandledScreen screen, int x, int y, int mouseX, int mouseY) {
+        MinecraftClient.getInstance().getTextureManager().bindTexture(ICONS);
+        drawTexturedModalRectWithMouseHighlight(screen, stack, x, y, 11*18, 0*18, 18, 18, mouseX, mouseY);
+        myTooltip(screen, stack, x, y,  18, 18, mouseX, mouseY, new TranslatableText("easierchests.sortchest"));
+    }
+    
+    public static void drawChestInventoryAllDown(MatrixStack stack, HandledScreen screen, int x, int y, int mouseX, int mouseY) {
+        MinecraftClient.getInstance().getTextureManager().bindTexture(ICONS);
+        drawTexturedModalRectWithMouseHighlight(screen, stack, x, y, 0 *18, 2*18, 18, 18, mouseX, mouseY);
+        myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, new TranslatableText("easierchests.matchdown"));
     }
 
     public static void drawPlayerInventoryBroom(MatrixStack stack, HandledScreen screen, int x, int y, int mouseX, int mouseY) {
@@ -228,11 +231,11 @@ public class ExtendedGuiChest extends HandledScreen
                 clickSlotsInRow((deltay-28)/18);
             }
         } else if (mouseX>x+this.backgroundWidth && mouseX <= x+this.backgroundWidth+18) {   // right buttons
-            if (mouseY>y+17 && mouseY<y+17+18)
+            /* if (mouseY>y+17 && mouseY<y+17+18)
                 sortInventory(true);
             else if (mouseY > y+17+18 && mouseY < y+17+36)
                 moveMatchingItems(true);
-            /* else if (mouseY>y+28+(this.inventoryRows)*18 && mouseY<y+28+(this.inventoryRows)*18+18)
+            else if (mouseY>y+28+(this.inventoryRows)*18 && mouseY<y+28+(this.inventoryRows)*18+18)
                 sortInventory(false);
             else if (mouseY>y+28+(this.inventoryRows)*18+18 && mouseY<y+28+(this.inventoryRows)*18+36)
                 moveMatchingItems(false);                       */
@@ -256,13 +259,6 @@ public class ExtendedGuiChest extends HandledScreen
         }
         if (searchWidget.isActive()) {
             return searchWidget.keyPressed(keycode, scancode, modifiers);
-        }
-        if (EasierChests.keySortChest.matchesKey(keycode, scancode)) {
-            sortInventory(true);
-            return true;
-        } else if (EasierChests.keyMoveToPlInv.matchesKey(keycode, scancode)) {
-            moveMatchingItems(true);
-            return true;
         }
         return super.keyPressed(keycode, scancode, modifiers);
     }
@@ -434,15 +430,7 @@ public class ExtendedGuiChest extends HandledScreen
         Inventory from, to;
         int fromSize, toSize;
         MinecraftClient minecraft = MinecraftClient.getInstance();
-        Inventory containerInventory;
-        ScreenHandler container = screen.getScreenHandler();
-        if (container instanceof GenericContainerScreenHandler) {
-            containerInventory = ((GenericContainerScreenHandler)container).getInventory();
-        } else if (container instanceof ShulkerBoxScreenHandler) {
-            containerInventory = ((InventoryExporter)container).getInventory();
-        } else {
-            return;
-        }
+        Inventory containerInventory = screen.getScreenHandler().getSlot(0).inventory;
 
         // use 36 for player inventory size so we won't use armor/2h slots
         if (isChestToPlayer) {
