@@ -140,7 +140,7 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
         if (handler.getClass().getSimpleName().equals("BackpackScreenHandler")) {
             return true;
         }
-        System.out.println("handler is a "+handler.getClass().getSimpleName());
+        // System.out.println("handler is a "+handler.getClass().getSimpleName());
         return false;
     }
 }
