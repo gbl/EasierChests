@@ -1,5 +1,6 @@
 package de.guntram.mcmod.easierchests.mixins;
 
+import de.guntram.mcmod.easierchests.ConfigurationHandler;
 import de.guntram.mcmod.easierchests.EasierChests;
 import de.guntram.mcmod.easierchests.ExtendedGuiChest;
 import de.guntram.mcmod.easierchests.interfaces.SlotClicker;
@@ -116,19 +117,20 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
         if (EasierChests.keySortPlInv.matchesKey(keyCode, scanCode)) {
             ExtendedGuiChest.sortInventory(this, false, this.playerInventory);
             cir.setReturnValue(true);
-        }
-        if (EasierChests.keyMoveToChest.matchesKey(keyCode, scanCode)
+        } else if (EasierChests.keyMoveToChest.matchesKey(keyCode, scanCode)
                 && isSupportedScreenHandler(handler)) {
                     ExtendedGuiChest.moveMatchingItems(acScreen, false);
                     cir.setReturnValue(true);
-        }
-        if (EasierChests.keySortChest.matchesKey(keyCode, scanCode)) {
+        } else if (EasierChests.keySortChest.matchesKey(keyCode, scanCode)) {
             ExtendedGuiChest.sortInventory(this, true, handler.getSlot(0).inventory);
             cir.setReturnValue(true);
         } else if (EasierChests.keyMoveToPlInv.matchesKey(keyCode, scanCode)) {
             ExtendedGuiChest.moveMatchingItems(acScreen, true);
             cir.setReturnValue(true);
-        }        
+        } else if (EasierChests.keySearchBox.matchesKey(keyCode, scanCode)) {
+            ConfigurationHandler.toggleSearchBox();
+            cir.setReturnValue(true);
+        }
     }
     
     public boolean isSupportedScreenHandler(ScreenHandler handler) {

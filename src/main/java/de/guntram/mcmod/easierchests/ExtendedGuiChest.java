@@ -77,8 +77,10 @@ public class ExtendedGuiChest extends HandledScreen
     {
         renderBackground(stack);
         super.render(stack, mouseX, mouseY, partialTicks);
-        searchWidget.render(stack, mouseX, mouseY, 0);
-        drawMouseoverTooltip(stack, mouseX, mouseY);
+        if (ConfigurationHandler.enableSearch()) {
+            searchWidget.render(stack, mouseX, mouseY, 0);
+            drawMouseoverTooltip(stack, mouseX, mouseY);
+        }
     }
 
     @Override
@@ -128,19 +130,22 @@ public class ExtendedGuiChest extends HandledScreen
                 this.drawTexture(stack, x+slot.x, y+slot.y, 7*18+1, 3*18+1, 16, 16);               // stop sign
             }
         }
-        String search = searchWidget.getText().toLowerCase();
-        if (!search.isEmpty()) {
-            int highlight = (int) Long.parseLong(ConfigurationHandler.getHighlightColor().toUpperCase(), 16);
-            for (int i=0; i<this.handler.slots.size(); i++) {
-                Slot slot = this.handler.slots.get(i);
-                Item item = slot.getStack().getItem();
-                if (item == Items.AIR) {
-                    continue;
-                }
-                if (I18n.translate(item.getTranslationKey()).toLowerCase().contains(search)) {
-                    // this.drawTexture(stack, x+slot.x, y+slot.y, 4*18+1, 0*18+1, 16, 16);
-                    GlStateManager.enableAlphaTest();
-                    DrawableHelper.fill(stack, x+slot.x-1, y+slot.y-1, x+slot.x+18-1, y+slot.y+18-1, highlight);
+        
+        if (ConfigurationHandler.enableSearch()) {
+            String search = searchWidget.getText().toLowerCase();
+            if (!search.isEmpty()) {
+                int highlight = (int) Long.parseLong(ConfigurationHandler.getHighlightColor().toUpperCase(), 16);
+                for (int i=0; i<this.handler.slots.size(); i++) {
+                    Slot slot = this.handler.slots.get(i);
+                    Item item = slot.getStack().getItem();
+                    if (item == Items.AIR) {
+                        continue;
+                    }
+                    if (I18n.translate(item.getTranslationKey()).toLowerCase().contains(search)) {
+                        // this.drawTexture(stack, x+slot.x, y+slot.y, 4*18+1, 0*18+1, 16, 16);
+                        GlStateManager.enableAlphaTest();
+                        DrawableHelper.fill(stack, x+slot.x-1, y+slot.y-1, x+slot.x+18-1, y+slot.y+18-1, highlight);
+                    }
                 }
             }
         }
@@ -208,7 +213,7 @@ public class ExtendedGuiChest extends HandledScreen
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, final int mouseButton) {
-        if (searchWidget.mouseClicked(mouseX, mouseY, mouseButton)) {
+        if (ConfigurationHandler.enableSearch() && searchWidget.mouseClicked(mouseX, mouseY, mouseButton)) {
             return true;
         }
         super.mouseClicked(mouseX, mouseY, mouseButton);
@@ -257,7 +262,7 @@ public class ExtendedGuiChest extends HandledScreen
         if (keycode == GLFW.GLFW_KEY_ESCAPE) {
             return super.keyPressed(keycode, scancode, modifiers);
         }
-        if (searchWidget.isActive()) {
+        if (ConfigurationHandler.enableSearch() && searchWidget.isActive()) {
             return searchWidget.keyPressed(keycode, scancode, modifiers);
         }
         return super.keyPressed(keycode, scancode, modifiers);
@@ -265,7 +270,7 @@ public class ExtendedGuiChest extends HandledScreen
     
     @Override
     public boolean charTyped(char chr, int keyCode) {
-        if (searchWidget.isActive()) {
+        if (ConfigurationHandler.enableSearch() && searchWidget.isActive()) {
             return searchWidget.charTyped(chr, keyCode);
         }
         return super.charTyped(chr, keyCode);
