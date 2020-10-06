@@ -79,8 +79,8 @@ public class ExtendedGuiChest extends HandledScreen
         super.render(stack, mouseX, mouseY, partialTicks);
         if (ConfigurationHandler.enableSearch()) {
             searchWidget.render(stack, mouseX, mouseY, 0);
-            drawMouseoverTooltip(stack, mouseX, mouseY);
         }
+        drawMouseoverTooltip(stack, mouseX, mouseY);
     }
 
     @Override
