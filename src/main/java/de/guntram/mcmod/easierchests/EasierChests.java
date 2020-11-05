@@ -1,5 +1,6 @@
 package de.guntram.mcmod.easierchests;
 
+import de.guntram.mcmod.crowdintranslate.CrowdinTranslate;
 import de.guntram.mcmod.fabrictools.ConfigurationProvider;
 import java.io.File;
 import net.fabricmc.api.ClientModInitializer;
@@ -20,6 +21,7 @@ public class EasierChests implements ClientModInitializer
     
     @Override
     public void onInitializeClient() {
+        CrowdinTranslate.downloadTranslations(MODID);
         ConfigurationHandler confHandler = ConfigurationHandler.getInstance();
         ConfigurationProvider.register(MODNAME, confHandler);
         confHandler.load(ConfigurationProvider.getSuggestedFile(MODID));

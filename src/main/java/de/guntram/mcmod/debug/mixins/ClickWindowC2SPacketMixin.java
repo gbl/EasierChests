@@ -1,7 +1,7 @@
 package de.guntram.mcmod.debug.mixins;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.c2s.play.ClickWindowC2SPacket;
+import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
 import net.minecraft.screen.slot.SlotActionType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ClickWindowC2SPacket.class)
+@Mixin(ClickSlotC2SPacket.class)
 public class ClickWindowC2SPacketMixin {
     
     static private final Logger LOGGER = LogManager.getLogger();
