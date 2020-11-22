@@ -29,18 +29,18 @@ public class GuiContainerMixin {
         ||  type == ScreenHandlerType.GENERIC_9X4
         ||  type == ScreenHandlerType.GENERIC_9X5
         ||  type == ScreenHandlerType.GENERIC_9X6) {
-            GenericContainerScreenHandler container = (GenericContainerScreenHandler) type.create(any, client.player.inventory);
+            GenericContainerScreenHandler container = (GenericContainerScreenHandler) type.create(any, client.player.getInventory());
             ExtendedGuiChest screen = new ExtendedGuiChest(container, 
-                    client.player.inventory, component,
+                    client.player.getInventory(), component,
                     container.getRows());
             client.player.currentScreenHandler = container;
             client.openScreen(screen);
             LOGGER.debug("(my chest)");
             ci.cancel();
         } else if (type == ScreenHandlerType.SHULKER_BOX) {
-            ShulkerBoxScreenHandler container = ScreenHandlerType.SHULKER_BOX.create(any, client.player.inventory);
+            ShulkerBoxScreenHandler container = ScreenHandlerType.SHULKER_BOX.create(any, client.player.getInventory());
             ExtendedGuiChest screen = new ExtendedGuiChest(container,
-                    client.player.inventory, component);
+                    client.player.getInventory(), component);
             client.player.currentScreenHandler = container;
             client.openScreen(screen);
             LOGGER.debug("(my shulker)");

@@ -311,7 +311,7 @@ public class ExtendedGuiChest extends HandledScreen
     }
     
     private void sortInventory(boolean isChest) {
-        Inventory inv=(isChest ? containerInventory : client.player.inventory);
+        Inventory inv=(isChest ? containerInventory : client.player.getInventory());
         sortInventory((SlotClicker) this, isChest, inv);
     }
 
@@ -439,11 +439,11 @@ public class ExtendedGuiChest extends HandledScreen
 
         // use 36 for player inventory size so we won't use armor/2h slots
         if (isChestToPlayer) {
-            from = containerInventory;            fromSize=from.size();
-            to   = minecraft.player.inventory;    toSize  =36;
+            from = containerInventory;                  fromSize=from.size();
+            to   = minecraft.player.getInventory();     toSize  =36;
         } else {
-            from = minecraft.player.inventory;    fromSize=36;
-            to   = containerInventory;            toSize  =to.size();
+            from = minecraft.player.getInventory();     fromSize=36;
+            to   = containerInventory;                  toSize  =to.size();
         }
         if (!ConfigurationHandler.allowExtraLargeChests()) {
             if (fromSize>9*6)   fromSize=9*6;
