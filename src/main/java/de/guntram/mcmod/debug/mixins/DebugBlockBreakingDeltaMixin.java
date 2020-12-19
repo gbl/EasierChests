@@ -27,7 +27,7 @@ public class DebugBlockBreakingDeltaMixin {
     public void debugBlockBreakDelta(BlockState state, PlayerEntity player, BlockView world, BlockPos pos, CallbackInfoReturnable ci)
     {
         float f = state.getHardness(world, pos);
-        int i = player.isUsingEffectiveTool(state) ? 30 : 100;
+        int i = player.canHarvest(state) ? 30 : 100;
         float result = player.getBlockBreakingSpeed(state) / f / (float)i;
         int ticksToBreak = (int) Math.ceil(1.0f / result);
         
