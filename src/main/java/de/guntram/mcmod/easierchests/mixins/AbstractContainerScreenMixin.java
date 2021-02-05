@@ -96,7 +96,7 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
                 ExtendedGuiChest.sortInventory(this, false, this.playerInventory);
                 cir.setReturnValue(true);
             } 
-            if (isSupportedScreenHandler(handler)) {
+            else if (isSupportedScreenHandler(handler)) {
                 if (mouseY >= y+backgroundHeight-30-3*18 && mouseY < y+backgroundHeight-30-1*18) {
                     ExtendedGuiChest.moveMatchingItems(HSthis, false);
                     cir.setReturnValue(true);
