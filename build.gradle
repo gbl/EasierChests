@@ -11,8 +11,9 @@ buildscript {
 }
 
 plugins {
-	id 'fabric-loom' version '0.4-SNAPSHOT'
+	id 'fabric-loom' version '0.5-SNAPSHOT'
 	id "com.modrinth.minotaur" version "1.1.0"
+	id "com.matthewprenger.cursegradle" version "1.4.0"
 }
 
 apply plugin: 'de.guntram.mcmod.crowdin-translate'
@@ -34,7 +35,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 ext.Versions = new Properties()
-Versions.load(file("Versionfiles/mcversion-1.16.4.properties").newReader())
+Versions.load(file("Versionfiles/mcversion-1.16.5.properties").newReader())
 
 archivesBaseName = "easierchests"
 ext.projectVersion = "1.6.2"
@@ -67,8 +68,6 @@ dependencies {
     include    "de.guntram.mcmod:GBfabrictools:${Versions['gbfabrictools_version']}"
     modImplementation "de.guntram.mcmod:crowdin-translate:1.2"
     include "de.guntram.mcmod:crowdin-translate:1.2"
-    
-    compile "curse.maven:inmis:3047009"
 }
 
 // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
@@ -99,4 +98,20 @@ task publishModrinth (type: TaskModrinthUpload){
     uploadFile = remapJar // This is the java jar task
     addGameVersion("${Versions['minecraft_version']}")
     addLoader('fabric')
+}
+
+curseforge {
+    apiKey = System.getenv("CURSEFORGE_TOKEN")
+    project {
+        id = '279501'
+        releaseType = 'release'
+        addGameVersion("${Versions['minecraft_version']}")
+        addGameVersion("Java 8")
+        addGameVersion("Fabric")
+
+        mainArtifact(remapJar)
+    }
+    options {
+        forgeGradleIntegration = false
+    }
 }

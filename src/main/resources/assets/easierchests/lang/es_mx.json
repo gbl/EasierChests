@@ -1,5 +1,5 @@
 {
-    "key.categories.easierchests": "CofresMásFáciles",
+    "key.categories.easierchests": "Cofres más fáciles",
     "easierchests.sortchest": "Ordenar cofre",
     "easierchests.sortplayer": "Ordenar inventario",
     "easierchests.matchdown": "Mover seleccionados al jugador",
@@ -8,15 +8,15 @@
     "key.easierchests.sortplayer": "Ordenar inventario",
     "key.easierchests.matchdown": "Mover seleccionados al jugador",
     "key.easierchests.matchup": "Mover seleccionados al cofre",
-    "key.easierchests.searchbox": "Show/hide the search box",
+    "key.easierchests.searchbox": "Mostrar/ocultar la caja de búsqueda",
     "easierchests.config.largechests": "Admitir cofres extra grandes",
     "easierchests.config.halfsize": "Tamaño del botón del medio",
     "easierchests.config.transparent": "Botones transparentes",
     "easierchests.config.highlight": "Color de resaltado (ARGB)",
-    "easierchests.config.enablesearch": "Enable search box",
+    "easierchests.config.enablesearch": "Habilitar cuadro de búsqueda",
     "easierchests.config.tt.largechests": "Admitir que los cofres tengan más de 54 espacios",
     "easierchests.config.tt.halfsize": "Tamaño del botón del medio a menos que el mouse esté encima de él",
     "easierchests.config.tt.transparent": "Hacer transparentes los botones a menos que el mouse esté encima de ellos",
     "easierchests.config.tt.highlight": "Colores Hex, 2 bytes cada uno: transparencia, rojo, verde, azul",
-    "easierchests.config.tt.enablesearch": "Enable the search box to find items by name"
+    "easierchests.config.tt.enablesearch": "Habilitar el cuadro de búsqueda para encontrar artículos por nombre"
 }
