@@ -387,8 +387,8 @@ public class ExtendedGuiChest extends HandledScreen
             return false;
         }
         // less enchantments before more enchantments
-        ListTag originalEnchantments = (original.getItem() == Items.ENCHANTED_BOOK) ? EnchantedBookItem.getEnchantmentTag(original) : original.getEnchantments();
-        ListTag replacementEnchantments = (replacement.getItem() == Items.ENCHANTED_BOOK) ? EnchantedBookItem.getEnchantmentTag(replacement) : replacement.getEnchantments();
+        ListTag originalEnchantments = (original.getItem() == Items.ENCHANTED_BOOK) ? EnchantedBookItem.getEnchantmentNbt(original) : original.getEnchantments();
+        ListTag replacementEnchantments = (replacement.getItem() == Items.ENCHANTED_BOOK) ? EnchantedBookItem.getEnchantmentNbt(replacement) : replacement.getEnchantments();
         if (replacementEnchantments == null || replacementEnchantments.isEmpty()) {
             if (originalEnchantments == null || originalEnchantments.isEmpty()) {
                 // Items are equal - same item type, same display name, no enchantments.
