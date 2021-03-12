@@ -7,6 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
@@ -43,13 +44,12 @@ public class ExtendedGuiChest extends HandledScreen
     private TextFieldWidget searchWidget;
     private static String searchText;
     
+    
+    
     public ExtendedGuiChest(GenericContainerScreenHandler container, PlayerInventory lowerInv, Text title,
             int rows)
     {
         super(container, lowerInv, title);
-        // ToDo: make container a Container again; can only
-        // use getInventory() on GenericContainer though. Need to
-        // find out how to access the inventory in the shulker box case.
         containerInventory = container.getInventory();
         this.inventoryRows=rows;
         backgroundHeight = 114 + rows * 18;
@@ -87,7 +87,7 @@ public class ExtendedGuiChest extends HandledScreen
     protected void drawForeground(MatrixStack stack, int mouseX, int mouseY)
     {
         this.textRenderer.draw(stack, this.title.getString(), 8.0F, 6.0F, 4210752);
-        this.textRenderer.draw(stack, this.playerInventory.getDisplayName().getString(), 8.0F, (float)(this.backgroundHeight - 96 + 2), 4210752);
+        this.textRenderer.draw(stack, this.field_29347, 8.0F, (float)(this.backgroundHeight - 96 + 2), 4210752);
     }
 
     /*
@@ -96,8 +96,9 @@ public class ExtendedGuiChest extends HandledScreen
     @Override
     protected void drawBackground(MatrixStack stack, float partialTicks, int mouseX, int mouseY)
     {
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.client.getTextureManager().bindTexture(background);
+        RenderSystem.setShader(GameRenderer::method_34542);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, background);
         if (separateBlits) {
             this.drawTexture(stack, x, y, 0, 0, this.backgroundWidth, this.inventoryRows * 18 + 17);
             this.drawTexture(stack, x, y + this.inventoryRows * 18 + 17, 0, 126, this.backgroundWidth, 96);
@@ -106,7 +107,7 @@ public class ExtendedGuiChest extends HandledScreen
         }
 
         GlStateManager.enableBlend();
-        this.client.getTextureManager().bindTexture(ICONS);
+        RenderSystem.setShaderTexture(0, ICONS);
 
         for (int i=0; i<9; i++) {
             this.drawTexturedModalRectWithMouseHighlight(stack, x+7+i*18,    y+-18,                          1*18, 2*18, 18, 18, mouseX, mouseY);       // arrow down above chests
@@ -123,7 +124,7 @@ public class ExtendedGuiChest extends HandledScreen
         }
 
         GlStateManager.disableBlend();
-        this.client.getTextureManager().bindTexture(ICONS);      // because tooltip rendering will have changed the texture to letters
+        RenderSystem.setShaderTexture(0, ICONS);      // because tooltip rendering will have changed the texture to letters
         for (int i=0; i<36; i++) {
             if (!hasShiftDown() && FrozenSlotDatabase.isSlotFrozen(i)) {
                 Slot slot = this.handler.slots.get(slotIndexFromPlayerInventoryIndex(i));
@@ -142,8 +143,6 @@ public class ExtendedGuiChest extends HandledScreen
                         continue;
                     }
                     if (I18n.translate(item.getTranslationKey()).toLowerCase().contains(search)) {
-                        // this.drawTexture(stack, x+slot.x, y+slot.y, 4*18+1, 0*18+1, 16, 16);
-                        GlStateManager.enableAlphaTest();
                         DrawableHelper.fill(stack, x+slot.x-1, y+slot.y-1, x+slot.x+18-1, y+slot.y+18-1, highlight);
                     }
                 }
@@ -152,25 +151,25 @@ public class ExtendedGuiChest extends HandledScreen
     }
     
     public static void drawChestInventoryBroom(MatrixStack stack, HandledScreen screen, int x, int y, int mouseX, int mouseY) {
-        MinecraftClient.getInstance().getTextureManager().bindTexture(ICONS);
+        RenderSystem.setShaderTexture(0, ICONS);
         drawTexturedModalRectWithMouseHighlight(screen, stack, x, y, 11*18, 0*18, 18, 18, mouseX, mouseY);
         myTooltip(screen, stack, x, y,  18, 18, mouseX, mouseY, new TranslatableText("easierchests.sortchest"));
     }
     
     public static void drawChestInventoryAllDown(MatrixStack stack, HandledScreen screen, int x, int y, int mouseX, int mouseY) {
-        MinecraftClient.getInstance().getTextureManager().bindTexture(ICONS);
+        RenderSystem.setShaderTexture(0, ICONS);
         drawTexturedModalRectWithMouseHighlight(screen, stack, x, y, 0 *18, 2*18, 18, 18, mouseX, mouseY);
         myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, new TranslatableText("easierchests.matchdown"));
     }
 
     public static void drawPlayerInventoryBroom(MatrixStack stack, HandledScreen screen, int x, int y, int mouseX, int mouseY) {
-        MinecraftClient.getInstance().getTextureManager().bindTexture(ICONS);
+        RenderSystem.setShaderTexture(0, ICONS);
         drawTexturedModalRectWithMouseHighlight(screen, stack, x, y, 11*18, 0*18, 18, 18, mouseX, mouseY);
         myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, new TranslatableText("easierchests.sortplayer"));
     }
     
     public static void drawPlayerInventoryAllUp(MatrixStack stack, HandledScreen screen, int x, int y, int mouseX, int mouseY) {
-        MinecraftClient.getInstance().getTextureManager().bindTexture(ICONS);
+        RenderSystem.setShaderTexture(0, ICONS);
         drawTexturedModalRectWithMouseHighlight(screen, stack, x, y,  8*18, 2*18, 18, 18, mouseX, mouseY);
         myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, new TranslatableText("easierchests.matchup"));
     }
@@ -181,24 +180,27 @@ public class ExtendedGuiChest extends HandledScreen
     
     private static void drawTexturedModalRectWithMouseHighlight(HandledScreen screen, MatrixStack stack, int screenx, int screeny, int textx, int texty, int sizex, int sizey, int mousex, int mousey) {
         if (mousex >= screenx && mousex < screenx+sizex && mousey >= screeny && mousey < screeny+sizey) {
-            RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
+            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
             screen.drawTexture(stack, screenx, screeny, textx, texty, sizex, sizey);
         } else {
             if (ConfigurationHandler.toneDownButtons()) {
                 RenderSystem.enableBlend();
-                RenderSystem.color4f(1.0f, 1.0f, 1.0f, 0.3f);
+                RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 0.3f);
             }
             if (ConfigurationHandler.halfSizeButtons()) {
-                RenderSystem.pushMatrix();
-                RenderSystem.scaled(0.5, 0.5, 0.5);
+                MatrixStack stack2 = RenderSystem.getModelViewStack();
+                stack2.push();
+                stack2.scale(0.5f, 0.5f, 0.5f);
+                RenderSystem.applyModelViewMatrix();
                 screen.drawTexture(stack, screenx*2+sizex/2, screeny*2+sizey/2, textx, texty, sizex, sizey);
-                RenderSystem.popMatrix();
+                stack2.pop();
+                RenderSystem.applyModelViewMatrix();
             }
             else {
                 screen.drawTexture(stack, screenx, screeny, textx, texty, sizex, sizey);
             }
         }
-        RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     private void myTooltip(MatrixStack stack, int screenx, int screeny, int sizex, int sizey, int mousex, int mousey, Text tooltip) {

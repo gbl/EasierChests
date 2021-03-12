@@ -4,11 +4,11 @@ import de.guntram.mcmod.easierchests.ConfigurationHandler;
 import de.guntram.mcmod.easierchests.EasierChests;
 import de.guntram.mcmod.easierchests.ExtendedGuiChest;
 import de.guntram.mcmod.easierchests.interfaces.SlotClicker;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import static net.minecraft.client.gui.screen.Screen.hasAltDown;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
@@ -29,7 +29,6 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
     @Shadow protected void onMouseClick(Slot slot, int invSlot, int button, SlotActionType slotActionType) {}
     @Shadow @Final protected ScreenHandler handler;
     @Shadow protected int x, y, backgroundWidth, backgroundHeight;
-    @Shadow @Final protected PlayerInventory playerInventory;
 
     protected AbstractContainerScreenMixin() { super(null); }
 
@@ -76,10 +75,9 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
         }
     }
     
-    @Inject(method="render", at=@At(value="INVOKE", target="Lcom/mojang/blaze3d/systems/RenderSystem;disableRescaleNormal()V"))
+    @Inject(method="render", at=@At(value="INVOKE", target="Lcom/mojang/blaze3d/systems/RenderSystem;disableDepthTest()V"))
     public void EasierChests$renderSpecialButtons(MatrixStack stack, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        Screen me = this;       // work around Java compiler ...
-        HandledScreen acScreen = (HandledScreen) me;
+        HandledScreen acScreen = (HandledScreen) (Object) this;
         ExtendedGuiChest.drawPlayerInventoryBroom(stack, acScreen, x+backgroundWidth, y+backgroundHeight-30-3*18, mouseX, mouseY);
         if (isSupportedScreenHandler(handler)) {
             ExtendedGuiChest.drawPlayerInventoryAllUp(stack, acScreen, x+backgroundWidth, y+backgroundHeight-30-2*18, mouseX, mouseY);
@@ -93,7 +91,7 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
         if (mouseX >= x+backgroundWidth && mouseX <= x+backgroundWidth+18) {
             HandledScreen HSthis = (HandledScreen) (Screen) this;
             if (mouseY >= y+backgroundHeight-30-3*18 && mouseY < y+backgroundHeight-30-2*18) {
-                ExtendedGuiChest.sortInventory(this, false, this.playerInventory);
+                ExtendedGuiChest.sortInventory(this, false, MinecraftClient.getInstance().player.getInventory());
                 cir.setReturnValue(true);
             } 
             else if (isSupportedScreenHandler(handler)) {
@@ -115,7 +113,7 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
     public void EasierChests$keyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable cir) {
         HandledScreen acScreen = (HandledScreen)(Screen)this;
         if (EasierChests.keySortPlInv.matchesKey(keyCode, scanCode)) {
-            ExtendedGuiChest.sortInventory(this, false, this.playerInventory);
+            ExtendedGuiChest.sortInventory(this, false, MinecraftClient.getInstance().player.getInventory());
             cir.setReturnValue(true);
         } else if (EasierChests.keyMoveToChest.matchesKey(keyCode, scanCode)
                 && isSupportedScreenHandler(handler)) {
