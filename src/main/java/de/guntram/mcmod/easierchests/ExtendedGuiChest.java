@@ -16,8 +16,8 @@ import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.ShulkerBoxScreenHandler;
 import net.minecraft.screen.slot.Slot;
@@ -87,7 +87,7 @@ public class ExtendedGuiChest extends HandledScreen
     protected void drawForeground(MatrixStack stack, int mouseX, int mouseY)
     {
         this.textRenderer.draw(stack, this.title.getString(), 8.0F, 6.0F, 4210752);
-        this.textRenderer.draw(stack, this.field_29347, 8.0F, (float)(this.backgroundHeight - 96 + 2), 4210752);
+        this.textRenderer.draw(stack, this.displayName, 8.0F, (float)(this.backgroundHeight - 96 + 2), 4210752);
     }
 
     /*
@@ -389,8 +389,8 @@ public class ExtendedGuiChest extends HandledScreen
             return false;
         }
         // less enchantments before more enchantments
-        ListTag originalEnchantments = (original.getItem() == Items.ENCHANTED_BOOK) ? EnchantedBookItem.getEnchantmentNbt(original) : original.getEnchantments();
-        ListTag replacementEnchantments = (replacement.getItem() == Items.ENCHANTED_BOOK) ? EnchantedBookItem.getEnchantmentNbt(replacement) : replacement.getEnchantments();
+        NbtList originalEnchantments = (original.getItem() == Items.ENCHANTED_BOOK) ? EnchantedBookItem.getEnchantmentNbt(original) : original.getEnchantments();
+        NbtList replacementEnchantments = (replacement.getItem() == Items.ENCHANTED_BOOK) ? EnchantedBookItem.getEnchantmentNbt(replacement) : replacement.getEnchantments();
         if (replacementEnchantments == null || replacementEnchantments.isEmpty()) {
             if (originalEnchantments == null || originalEnchantments.isEmpty()) {
                 // Items are equal - same item type, same display name, no enchantments.
@@ -406,8 +406,8 @@ public class ExtendedGuiChest extends HandledScreen
             return true;
         } else if (replacementEnchantments.size() == originalEnchantments.size()) {
             for (int i=0; i<replacementEnchantments.size(); i++) {
-                String originalId = ((CompoundTag)originalEnchantments.get(i)).getString("id");
-                String replacementId = ((CompoundTag)replacementEnchantments.get(i)).getString("id");
+                String originalId = ((NbtCompound)originalEnchantments.get(i)).getString("id");
+                String replacementId = ((NbtCompound)replacementEnchantments.get(i)).getString("id");
                 int compared = originalId.compareTo(replacementId);
 
                 if (compared < 0) {
@@ -415,8 +415,8 @@ public class ExtendedGuiChest extends HandledScreen
                 } else if (compared > 0) {
                     return true;
                 }
-                int originalLevel = ((CompoundTag)originalEnchantments.get(i)).getInt("lvl");
-                int replacementLevel = ((CompoundTag)replacementEnchantments.get(i)).getInt("lvl");
+                int originalLevel = ((NbtCompound)originalEnchantments.get(i)).getInt("lvl");
+                int replacementLevel = ((NbtCompound)replacementEnchantments.get(i)).getInt("lvl");
                 if (originalLevel == replacementLevel) {
                     continue;
                 }
