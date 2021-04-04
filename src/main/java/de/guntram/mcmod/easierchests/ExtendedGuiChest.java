@@ -44,7 +44,8 @@ public class ExtendedGuiChest extends HandledScreen
     private TextFieldWidget searchWidget;
     private static String searchText;
     
-    
+    // temp kludge -- field_2776 and field_2800 seem to have been renamed with 21w13a
+    private int x, y;
     
     public ExtendedGuiChest(GenericContainerScreenHandler container, PlayerInventory lowerInv, Text title,
             int rows)
@@ -68,6 +69,9 @@ public class ExtendedGuiChest extends HandledScreen
     @Override
     public void init() {
         super.init();
+        x = field_2776;
+        y = field_2800;
+
         searchWidget = new TextFieldWidget(textRenderer, x+80, y+3, 80, 12, new LiteralText("Search"));
         searchWidget.setText(searchText);
     }
@@ -96,7 +100,7 @@ public class ExtendedGuiChest extends HandledScreen
     @Override
     protected void drawBackground(MatrixStack stack, float partialTicks, int mouseX, int mouseY)
     {
-        RenderSystem.setShader(GameRenderer::method_34542);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, background);
         if (separateBlits) {
@@ -106,7 +110,7 @@ public class ExtendedGuiChest extends HandledScreen
             this.drawTexture(stack, x, y, 0, 0, this.backgroundWidth, this.backgroundHeight);
         }
 
-        GlStateManager.enableBlend();
+        GlStateManager._enableBlend();
         RenderSystem.setShaderTexture(0, ICONS);
 
         for (int i=0; i<9; i++) {
@@ -123,7 +127,7 @@ public class ExtendedGuiChest extends HandledScreen
             this.drawTexturedModalRectWithMouseHighlight(stack, x+ -18,      y+28+(i+this.inventoryRows)*18, 9*18, 2*18, 18, 18, mouseX, mouseY);       // arrow up left of player inv
         }
 
-        GlStateManager.disableBlend();
+        GlStateManager._disableBlend();
         RenderSystem.setShaderTexture(0, ICONS);      // because tooltip rendering will have changed the texture to letters
         for (int i=0; i<36; i++) {
             if (!hasShiftDown() && FrozenSlotDatabase.isSlotFrozen(i)) {
