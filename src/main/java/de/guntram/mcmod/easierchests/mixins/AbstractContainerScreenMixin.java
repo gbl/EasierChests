@@ -28,7 +28,7 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
 
     @Shadow protected void onMouseClick(Slot slot, int invSlot, int button, SlotActionType slotActionType) {}
     @Shadow @Final protected ScreenHandler handler;
-    @Shadow protected int field_2776, field_2800, backgroundWidth, backgroundHeight;
+    @Shadow protected int x, y, backgroundWidth, backgroundHeight;
 
     protected AbstractContainerScreenMixin() { super(null); }
 
@@ -78,30 +78,30 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
     @Inject(method="render", at=@At(value="INVOKE", target="Lcom/mojang/blaze3d/systems/RenderSystem;disableDepthTest()V"))
     public void EasierChests$renderSpecialButtons(MatrixStack stack, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         HandledScreen acScreen = (HandledScreen) (Object) this;
-        ExtendedGuiChest.drawPlayerInventoryBroom(stack, acScreen, field_2776+backgroundWidth, field_2800+backgroundHeight-30-3*18, mouseX, mouseY);
+        ExtendedGuiChest.drawPlayerInventoryBroom(stack, acScreen, x+backgroundWidth, y+backgroundHeight-30-3*18, mouseX, mouseY);
         if (isSupportedScreenHandler(handler)) {
-            ExtendedGuiChest.drawPlayerInventoryAllUp(stack, acScreen, field_2776+backgroundWidth, field_2800+backgroundHeight-30-2*18, mouseX, mouseY);
-            ExtendedGuiChest.drawChestInventoryBroom(stack, acScreen, field_2776+backgroundWidth, field_2800+17, mouseX, mouseY);
-            ExtendedGuiChest.drawChestInventoryAllDown(stack, acScreen, field_2776+this.backgroundWidth, field_2800+17+18, mouseX, mouseY);
+            ExtendedGuiChest.drawPlayerInventoryAllUp(stack, acScreen, x+backgroundWidth, y+backgroundHeight-30-2*18, mouseX, mouseY);
+            ExtendedGuiChest.drawChestInventoryBroom(stack, acScreen, x+backgroundWidth, y+17, mouseX, mouseY);
+            ExtendedGuiChest.drawChestInventoryAllDown(stack, acScreen, x+this.backgroundWidth, y+17+18, mouseX, mouseY);
         }
     }
     
     @Inject(method="mouseClicked", at=@At("HEAD"), cancellable=true)
     public void EasierChests$checkMyButtons(double mouseX, double mouseY, int button, CallbackInfoReturnable cir) {
-        if (mouseX >= field_2776+backgroundWidth && mouseX <= field_2776+backgroundWidth+18) {
+        if (mouseX >= x+backgroundWidth && mouseX <= x+backgroundWidth+18) {
             HandledScreen HSthis = (HandledScreen) (Screen) this;
-            if (mouseY >= field_2800+backgroundHeight-30-3*18 && mouseY < field_2800+backgroundHeight-30-2*18) {
+            if (mouseY >= y+backgroundHeight-30-3*18 && mouseY < y+backgroundHeight-30-2*18) {
                 ExtendedGuiChest.sortInventory(this, false, MinecraftClient.getInstance().player.getInventory());
                 cir.setReturnValue(true);
             } 
             else if (isSupportedScreenHandler(handler)) {
-                if (mouseY >= field_2800+backgroundHeight-30-3*18 && mouseY < field_2800+backgroundHeight-30-1*18) {
+                if (mouseY >= y+backgroundHeight-30-3*18 && mouseY < y+backgroundHeight-30-1*18) {
                     ExtendedGuiChest.moveMatchingItems(HSthis, false);
                     cir.setReturnValue(true);
-                } else if (mouseY > field_2800+17 && mouseY < field_2800+17+18) {
+                } else if (mouseY > y+17 && mouseY < y+17+18) {
                     ExtendedGuiChest.sortInventory(this, true, handler.getSlot(0).inventory);
                     cir.setReturnValue(true);
-                } else if (mouseY > field_2800+17+18 && mouseY < field_2800+17+36) {
+                } else if (mouseY > y+17+18 && mouseY < y+17+36) {
                     ExtendedGuiChest.moveMatchingItems(HSthis, true);
                     cir.setReturnValue(true);
                 }

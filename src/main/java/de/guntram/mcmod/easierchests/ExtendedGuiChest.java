@@ -44,9 +44,6 @@ public class ExtendedGuiChest extends HandledScreen
     private TextFieldWidget searchWidget;
     private static String searchText;
     
-    // temp kludge -- field_2776 and field_2800 seem to have been renamed with 21w13a
-    private int x, y;
-    
     public ExtendedGuiChest(GenericContainerScreenHandler container, PlayerInventory lowerInv, Text title,
             int rows)
     {
@@ -69,8 +66,6 @@ public class ExtendedGuiChest extends HandledScreen
     @Override
     public void init() {
         super.init();
-        x = field_2776;
-        y = field_2800;
 
         searchWidget = new TextFieldWidget(textRenderer, x+80, y+3, 80, 12, new LiteralText("Search"));
         searchWidget.setText(searchText);
@@ -91,7 +86,7 @@ public class ExtendedGuiChest extends HandledScreen
     protected void drawForeground(MatrixStack stack, int mouseX, int mouseY)
     {
         this.textRenderer.draw(stack, this.title.getString(), 8.0F, 6.0F, 4210752);
-        this.textRenderer.draw(stack, this.displayName, 8.0F, (float)(this.backgroundHeight - 96 + 2), 4210752);
+        this.textRenderer.draw(stack, this.playerInventoryTitle, 8.0F, (float)(this.backgroundHeight - 96 + 2), 4210752);
     }
 
     /*
