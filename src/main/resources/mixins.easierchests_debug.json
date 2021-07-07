@@ -3,8 +3,8 @@
     "package": "de.guntram.mcmod.debug.mixins",
     "refmap": "EasierChests-refmap.json",
     "minVersion": "0.6",
-    "client": [
-        "ClickWindowC2SPacketMixin",
+    "client-disabled": [
+        "ClickWindowC2SPacketDebugMixin",
         "GuiActionConfirmDebugMixin"
     ],
     "injectors": {
