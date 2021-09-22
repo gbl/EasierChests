@@ -1,7 +1,7 @@
 {
-    "key.categories.easierchests": "Простой Сундук",
-    "easierchests.sortchest": "Сортировать инвентарь сундука",
-    "easierchests.sortplayer": "Сортировка инвентаря",
+    "key.categories.easierchests": "Облегчённые сундуки",
+    "easierchests.sortchest": "Отсортировать сундук",
+    "easierchests.sortplayer": "Отсортировать инвентарь",
     "easierchests.matchdown": "Перенести совпадающие игроку",
     "easierchests.matchup": "Перенести совпадающие в сундук",
     "key.easierchests.sortchest": "Сортировать инвентарь сундука",

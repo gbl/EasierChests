@@ -1,9 +1,9 @@
 {
-    "key.categories.easierchests": "EasierChests",
+    "key.categories.easierchests": "Prostsze Skrzynie",
     "easierchests.sortchest": "Posortuj skrzynkę",
     "easierchests.sortplayer": "Posortuj Ekwipunek",
-    "easierchests.matchdown": "Move matches to player",
-    "easierchests.matchup": "Move matches to chest",
+    "easierchests.matchdown": "Przenieś dopasowania do ekwipunku gracza",
+    "easierchests.matchup": "Przenieś dopasowania do skrzyni",
     "key.easierchests.sortchest": "Posortuj skrzynkę",
     "key.easierchests.sortplayer": "Posortuj ekwipunek",
     "key.easierchests.matchdown": "Move matches to player",
@@ -11,12 +11,12 @@
     "key.easierchests.searchbox": "Pokaż/ukryj pole wyszukiwania",
     "easierchests.config.largechests": "Allow extra large chests",
     "easierchests.config.halfsize": "Mniejszy o połowę przycisk",
-    "easierchests.config.transparent": "Przezroczysty przycisk",
+    "easierchests.config.transparent": "Przezroczyste Przyciski",
     "easierchests.config.highlight": "Highlight color (ARGB)",
     "easierchests.config.enablesearch": "Włącz wyszukiwanie",
     "easierchests.config.tt.largechests": "Allow chests to have more than 54 entries",
     "easierchests.config.tt.halfsize": "Half button size unless mouse hovers over them",
     "easierchests.config.tt.transparent": "Make buttons transparent unless mouse hovers over them",
     "easierchests.config.tt.highlight": "Hex colors, 2 bytes each: transparency, red, green, blue",
-    "easierchests.config.tt.enablesearch": "Enable the search box to find items by name"
+    "easierchests.config.tt.enablesearch": "Włącz pole wyszukiwania, aby znaleźć elementy według nazwy"
 }

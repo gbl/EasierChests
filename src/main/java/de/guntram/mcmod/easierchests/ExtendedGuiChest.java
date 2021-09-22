@@ -463,7 +463,7 @@ public class ExtendedGuiChest extends HandledScreen
             for (int j=0; j<toSize; j++) {
                 ItemStack toStack = to.getStack(j);
                 if (fromStack.isItemEqual(toStack)
-                &&  ItemStack.areTagsEqual(fromStack, toStack)) {
+                &&  ItemStack.areNbtEqual(fromStack, toStack)) {
                     // System.out.println("  from["+i+"] is same as to["+j+"] ("+toStack.getDisplayName()+"), clicking "+slot);
                     ((SlotClicker)screen).EasierChests$onMouseClick(null, slot, 0, SlotActionType.QUICK_MOVE);
                 }
