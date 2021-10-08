@@ -15,6 +15,7 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ShulkerBoxScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
+import org.apache.logging.log4j.LogManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -140,6 +141,11 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
         if (handler.getClass().getSimpleName().equals("BackpackScreenHandler")) {
             return true;
         }
+        if (handler.getClass().getSimpleName().equals("ReinforcedStorageScreenHandler")) {
+            return true;
+        }
+        
+        LogManager.getLogger().info("opening class "+handler.getClass().getSimpleName() + "/" + handler.getClass().getCanonicalName());
         // System.out.println("handler is a "+handler.getClass().getSimpleName());
         return false;
     }
