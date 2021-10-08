@@ -1,21 +1,32 @@
 package de.guntram.mcmod.easierchests.mixins;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import de.guntram.mcmod.easierchests.ConfigurationHandler;
 import de.guntram.mcmod.easierchests.EasierChests;
 import de.guntram.mcmod.easierchests.ExtendedGuiChest;
+import de.guntram.mcmod.easierchests.FrozenSlotDatabase;
 import de.guntram.mcmod.easierchests.interfaces.SlotClicker;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import static net.minecraft.client.gui.screen.Screen.hasAltDown;
+import static net.minecraft.client.gui.screen.Screen.hasShiftDown;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ShulkerBoxScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.text.LiteralText;
 import org.apache.logging.log4j.LogManager;
+import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -27,7 +38,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(HandledScreen.class)
 public abstract class AbstractContainerScreenMixin extends Screen implements SlotClicker {
 
+    private static final int PLAYERSLOTS = 36;      // # of slots in player inventory -> so not in container
+    private static int PLAYERINVCOLS = 9;           // let's not make those final; maybe we'll need compatibility
+    private static int PLAYERINVROWS = 4;           // with some mod at some point which changes these.
+
+    private static TextFieldWidget searchWidget;
+    
     @Shadow protected void onMouseClick(Slot slot, int invSlot, int button, SlotActionType slotActionType) {}
+    @Shadow protected void drawMouseoverTooltip(MatrixStack matrices, int x, int y) {}
+    @Shadow protected boolean isPointWithinBounds(int x, int y, int w, int h, double pX, double pY) {return true;}
     @Shadow @Final protected ScreenHandler handler;
     @Shadow protected int x, y, backgroundWidth, backgroundHeight;
 
@@ -41,9 +60,9 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
     @Override
     public int EasierChests$getPlayerInventoryStartIndex() {
         if (handler instanceof PlayerScreenHandler) {
-            return 9;
+            return PLAYERINVCOLS;
         } else {
-            return this.handler.slots.size()-36;
+            return this.handler.slots.size()-PLAYERSLOTS;
         }
     }
     
@@ -52,20 +71,20 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
         int firstSlot = EasierChests$getPlayerInventoryStartIndex();
         if (slot < firstSlot) {
             return -1;
-        } else if (slot < firstSlot + 27) {
-            return slot - firstSlot + 9;
+        } else if (slot < firstSlot + (PLAYERSLOTS-PLAYERINVCOLS)) {
+            return slot - firstSlot + PLAYERINVCOLS;
         } else {
-            return slot - firstSlot - 27;
+            return slot - firstSlot - (PLAYERSLOTS-PLAYERINVCOLS);
         }
     }
     
     @Override
     public int EasierChests$slotIndexfromPlayerInventoryIndex(int slot) {
         int firstSlot = EasierChests$getPlayerInventoryStartIndex();
-        if (slot < 9) {
-            return slot + firstSlot + 27;
+        if (slot < PLAYERINVCOLS) {
+            return slot + firstSlot + (PLAYERSLOTS-PLAYERINVCOLS);
         } else {
-            return slot + firstSlot - 9;
+            return slot + firstSlot - PLAYERINVCOLS;
         }
     }
     
@@ -78,61 +97,278 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
     
     @Inject(method="render", at=@At(value="INVOKE", target="Lcom/mojang/blaze3d/systems/RenderSystem;disableDepthTest()V"))
     public void EasierChests$renderSpecialButtons(MatrixStack stack, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        HandledScreen acScreen = (HandledScreen) (Object) this;
-        ExtendedGuiChest.drawPlayerInventoryBroom(stack, acScreen, x+backgroundWidth, y+backgroundHeight-30-3*18, mouseX, mouseY);
+        HandledScreen hScreen = (HandledScreen) (Object) this;
+        
+        ExtendedGuiChest.drawPlayerInventoryBroom(stack, hScreen, x+backgroundWidth, y+backgroundHeight-30-3*18, mouseX, mouseY);
         if (isSupportedScreenHandler(handler)) {
-            ExtendedGuiChest.drawPlayerInventoryAllUp(stack, acScreen, x+backgroundWidth, y+backgroundHeight-30-2*18, mouseX, mouseY);
-            ExtendedGuiChest.drawChestInventoryBroom(stack, acScreen, x+backgroundWidth, y+17, mouseX, mouseY);
-            ExtendedGuiChest.drawChestInventoryAllDown(stack, acScreen, x+this.backgroundWidth, y+17+18, mouseX, mouseY);
+            
+            int cols = getSlotColumnCount();
+            int rows = getSlotRowCount();
+
+            GlStateManager._enableBlend();
+            RenderSystem.setShaderTexture(0, ExtendedGuiChest.ICONS);
+            
+            if (ConfigurationHandler.enableColumnButtons()) {
+                for (int i=0; i<cols; i++) {
+                    ExtendedGuiChest.drawTexturedModalRectWithMouseHighlight(hScreen, stack, x+7+i*18, y+-18,            1*18, 2*18, 18, 18, mouseX, mouseY);       // arrow down above chests
+                    if (i<PLAYERINVCOLS) {
+                        ExtendedGuiChest.drawTexturedModalRectWithMouseHighlight(hScreen, stack, x+7+i*18, y+40+(rows+4)*18, 9*18, 2*18, 18, 18, mouseX, mouseY);       // arrow up below player inv
+                    }
+                }
+            }
+            
+            if (ConfigurationHandler.enableRowButtons()) {
+                for (int i=0; i<rows; i++) {
+                    ExtendedGuiChest.drawTexturedModalRectWithMouseHighlight(hScreen, stack, x+ -18,   y+17+i*18,        1*18, 2*18, 18, 18, mouseX, mouseY);       // arrow down left of chest
+                }
+                for (int i=0; i<PLAYERINVROWS; i++) {
+                    ExtendedGuiChest.drawTexturedModalRectWithMouseHighlight(hScreen, stack, x+ -18,   y+28+(i+rows)*18, 9*18, 2*18, 18, 18, mouseX, mouseY);       // arrow up left of player inv
+                }
+            }
+            
+            GlStateManager._disableBlend();
+            RenderSystem.setShaderTexture(0, ExtendedGuiChest.ICONS);      // because tooltip rendering will have changed the texture to letters
+            for (int i=0; i<PLAYERSLOTS; i++) {
+                if (!hasShiftDown() && FrozenSlotDatabase.isSlotFrozen(i)) {
+                    Slot slot = this.handler.slots.get(EasierChests$slotIndexfromPlayerInventoryIndex(i));
+                    this.drawTexture(stack, x+slot.x, y+slot.y, 7*18+1, 3*18+1, 16, 16);               // stop sign
+                }
+            }
+            
+            if (ConfigurationHandler.enableSearch()) {
+                if (searchWidget == null) {
+                    searchWidget = new TextFieldWidget(textRenderer, x+backgroundWidth-85, y+3, 80, 12, new LiteralText("Search"));
+                } else {
+                    searchWidget.x = x+backgroundWidth-85;
+                    searchWidget.y = y+3;
+                }
+                searchWidget.render(stack, mouseX, mouseY, delta);
+                
+                String search = searchWidget.getText().toLowerCase();
+                if (!search.isEmpty()) {
+                    int highlight = (int) Long.parseLong(ConfigurationHandler.getHighlightColor().toUpperCase(), 16);
+                    for (int i=0; i<this.handler.slots.size(); i++) {
+                        Slot slot = this.handler.slots.get(i);
+                        Item item = slot.getStack().getItem();
+                        if (item == Items.AIR) {
+                            continue;
+                        }
+                        if (I18n.translate(item.getTranslationKey()).toLowerCase().contains(search)) {
+                            DrawableHelper.fill(stack, x+slot.x-1, y+slot.y-1, x+slot.x+18-1, y+slot.y+18-1, highlight);
+                        }
+                    }
+                }
+                
+            }
+            ExtendedGuiChest.drawPlayerInventoryAllUp(stack, hScreen, x+backgroundWidth, y+backgroundHeight-30-2*18, mouseX, mouseY);
+            ExtendedGuiChest.drawChestInventoryBroom(stack, hScreen, x+backgroundWidth, y+17, mouseX, mouseY);
+            ExtendedGuiChest.drawChestInventoryAllDown(stack, hScreen, x+this.backgroundWidth, y+17+18, mouseX, mouseY);
         }
     }
     
     @Inject(method="mouseClicked", at=@At("HEAD"), cancellable=true)
-    public void EasierChests$checkMyButtons(double mouseX, double mouseY, int button, CallbackInfoReturnable cir) {
+    public void EasierChests$checkMyButtons(double mouseX, double mouseY, int mouseButton, CallbackInfoReturnable cir) {
+        
+        if (isSupportedScreenHandler(handler)
+        && ConfigurationHandler.enableSearch() 
+        && searchWidget.mouseClicked(mouseX, mouseY, mouseButton)) {
+            cir.setReturnValue(true);
+            cir.cancel();
+            return;
+        }
+        
         if (mouseX >= x+backgroundWidth && mouseX <= x+backgroundWidth+18) {
-            HandledScreen HSthis = (HandledScreen) (Screen) this;
+            HandledScreen hScreen = (HandledScreen) (Screen) this;
             if (mouseY >= y+backgroundHeight-30-3*18 && mouseY < y+backgroundHeight-30-2*18) {
                 ExtendedGuiChest.sortInventory(this, false, MinecraftClient.getInstance().player.getInventory());
                 cir.setReturnValue(true);
+                cir.cancel();
+                return;
             } 
-            else if (isSupportedScreenHandler(handler)) {
-                if (mouseY >= y+backgroundHeight-30-3*18 && mouseY < y+backgroundHeight-30-1*18) {
-                    ExtendedGuiChest.moveMatchingItems(HSthis, false);
-                    cir.setReturnValue(true);
-                } else if (mouseY > y+17 && mouseY < y+17+18) {
-                    ExtendedGuiChest.sortInventory(this, true, handler.getSlot(0).inventory);
-                    cir.setReturnValue(true);
-                } else if (mouseY > y+17+18 && mouseY < y+17+36) {
-                    ExtendedGuiChest.moveMatchingItems(HSthis, true);
-                    cir.setReturnValue(true);
-                }
+            else if (!isSupportedScreenHandler(handler)) {
+                return;
+            } else if (mouseY >= y+backgroundHeight-30-3*18 && mouseY < y+backgroundHeight-30-1*18) {
+                ExtendedGuiChest.moveMatchingItems(hScreen, false);
+                cir.setReturnValue(true);
+                cir.cancel();
+                return;
+            } else if (mouseY > y+17 && mouseY < y+17+18) {
+                ExtendedGuiChest.sortInventory(this, true, handler.getSlot(0).inventory);
+                cir.setReturnValue(true);
+                cir.cancel();
+                return;
+            } else if (mouseY > y+17+18 && mouseY < y+17+36) {
+                ExtendedGuiChest.moveMatchingItems(hScreen, true);
+                cir.setReturnValue(true);
+                cir.cancel();
+                return;
             }
+        }
+        if (!isSupportedScreenHandler(handler)) {
+            return;
+        }
+        if (mouseButton == 0 && checkForMyButtons(mouseX, mouseY)) {
+            cir.setReturnValue(true);
+            cir.cancel();
+            return;
+        }
+        if (mouseButton==2 &&  checkForToggleFrozen(mouseX, mouseY)) {
+            cir.setReturnValue(true);
+            cir.cancel();
+            return;
         }
     }
     
+    private boolean checkForMyButtons(double mouseX, double mouseY) {
+        int rows = getSlotRowCount();
+        int cols = getSlotColumnCount();
+
+        if (ConfigurationHandler.enableRowButtons() && mouseX>=x-18 && mouseX<=x) { // left buttons
+            int deltay = (int)mouseY-y;
+            if (deltay < rows*18+17) {                                          // chest -> down
+                clickSlotsInRow((deltay-17)/18);
+                return true;
+            }
+            else if (deltay < (rows + PLAYERINVROWS ) * 18 + 28) {              // inv -> up
+                clickSlotsInRow((deltay-28)/18);
+                return true;
+            }
+        } 
+        if (ConfigurationHandler.enableColumnButtons() && mouseX>x+7 && mouseX<x+7+cols*18) { // top/bottom buttons
+            boolean isChest;
+            int column;
+            if (mouseY>y-18 && mouseY<y) {                                      // top -> down
+                isChest=true;
+                column=((int)mouseX-x-7)/18;
+            } else if (mouseY>y+40+(rows+PLAYERINVROWS)*18 && mouseY<y+40+(rows+PLAYERINVROWS)*18+18) {
+                isChest=false;
+                column=((int)mouseX-x-7)/18;
+                if (column > PLAYERINVCOLS) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+            clickSlotsInColumn(column, isChest);
+            return true;
+        }
+        return false;
+    }
+    
+    private boolean checkForToggleFrozen(double mouseX, double mouseY) {
+        for (int i = 0; i < this.handler.slots.size(); ++i) {
+            int invIndex=this.EasierChests$playerInventoryIndexFromSlotIndex(i);
+            if (invIndex==-1)
+                continue;
+            Slot slot = this.handler.slots.get(i);
+            if (isPointWithinBounds(slot.x, slot.y, 16, 16, mouseX, mouseY)) {
+                FrozenSlotDatabase.setSlotFrozen(invIndex, !FrozenSlotDatabase.isSlotFrozen(invIndex));
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private void clickSlotsInRow(int row) {
+        int rows = getSlotRowCount();
+        int cols = getSlotColumnCount();
+        int firstSlot;
+        
+        if (row <= rows) {      // we're in the chest
+            firstSlot = row * cols;
+        } else {
+            firstSlot = rows * cols + (row-rows)*PLAYERINVCOLS;
+            cols = PLAYERINVCOLS;
+        }
+
+        for (int slot=firstSlot; slot<firstSlot+cols; slot++)
+            if (hasShiftDown() || !FrozenSlotDatabase.isSlotFrozen(EasierChests$playerInventoryIndexFromSlotIndex(slot))) {
+                slotClick(slot, 0, SlotActionType.QUICK_MOVE);
+            }
+            
+    }
+
+    private void clickSlotsInColumn(int column, boolean isChest) {
+        int cols = getSlotColumnCount();
+        int rows = getSlotRowCount();
+        int first, count;
+
+        if (isChest) {
+            first = column;
+            count = rows;
+        } else {
+            first = rows * cols + column;
+            count = PLAYERINVROWS;
+            cols = PLAYERINVCOLS;
+        }
+        for (int i=0; i<count; i++) {
+            int slot=first+i*cols;
+            if (hasShiftDown() || !FrozenSlotDatabase.isSlotFrozen(EasierChests$playerInventoryIndexFromSlotIndex(slot)))
+                slotClick(slot, 0, SlotActionType.QUICK_MOVE);
+        }
+    }
+
+    private void slotClick(int slot, int mouseButton, SlotActionType clickType) {
+        ((SlotClicker)this).EasierChests$onMouseClick(null, slot, mouseButton, clickType);
+    }
+
     @Inject(method="keyPressed", at=@At("HEAD"), cancellable=true)
     public void EasierChests$keyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable cir) {
-        HandledScreen acScreen = (HandledScreen)(Screen)this;
+        HandledScreen hScreen = (HandledScreen)(Screen)this;
+        
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+            return;
+        }
+        
+        if (isSupportedScreenHandler(handler)
+        && ConfigurationHandler.enableSearch()
+        && searchWidget.isActive()) {
+            boolean value = searchWidget.keyPressed(keyCode, scanCode, modifiers);
+            cir.setReturnValue(value);
+            cir.cancel();
+            return;
+        }
+
         if (EasierChests.keySortPlInv.matchesKey(keyCode, scanCode)) {
             ExtendedGuiChest.sortInventory(this, false, MinecraftClient.getInstance().player.getInventory());
             cir.setReturnValue(true);
-        } else if (EasierChests.keyMoveToChest.matchesKey(keyCode, scanCode)
-                && isSupportedScreenHandler(handler)) {
-                    ExtendedGuiChest.moveMatchingItems(acScreen, false);
-                    cir.setReturnValue(true);
+            cir.cancel();
+        } else if (!isSupportedScreenHandler(handler)) {
+            return;
+        } else if (EasierChests.keyMoveToChest.matchesKey(keyCode, scanCode)) {
+            ExtendedGuiChest.moveMatchingItems(hScreen, false);
+            cir.setReturnValue(true);
+            cir.cancel();
         } else if (EasierChests.keySortChest.matchesKey(keyCode, scanCode)) {
             ExtendedGuiChest.sortInventory(this, true, handler.getSlot(0).inventory);
             cir.setReturnValue(true);
+            cir.cancel();
         } else if (EasierChests.keyMoveToPlInv.matchesKey(keyCode, scanCode)) {
-            ExtendedGuiChest.moveMatchingItems(acScreen, true);
+            ExtendedGuiChest.moveMatchingItems(hScreen, true);
             cir.setReturnValue(true);
+            cir.cancel();
         } else if (EasierChests.keySearchBox.matchesKey(keyCode, scanCode)) {
             ConfigurationHandler.toggleSearchBox();
             cir.setReturnValue(true);
+            cir.cancel();
         }
     }
     
+    @Override
+    public boolean charTyped(char chr, int keyCode) {
+        if (isSupportedScreenHandler(handler)
+        && ConfigurationHandler.enableSearch()
+        && searchWidget.isActive()) {
+            return searchWidget.charTyped(chr, keyCode);
+        }
+        return super.charTyped(chr, keyCode);
+    }
+    
     public boolean isSupportedScreenHandler(ScreenHandler handler) {
+        if (handler == null) {      // can this happen? Make IDE happy
+            return false;
+        }
+
         if (handler instanceof GenericContainerScreenHandler || handler instanceof ShulkerBoxScreenHandler) {
             return true;
         }
@@ -145,8 +381,28 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
             return true;
         }
         
-        LogManager.getLogger().info("opening class "+handler.getClass().getSimpleName() + "/" + handler.getClass().getCanonicalName());
-        // System.out.println("handler is a "+handler.getClass().getSimpleName());
+        LogManager.getLogger(this.getClass()).debug("opening class "+handler.getClass().getSimpleName() + "/" + handler.getClass().getCanonicalName());
         return false;
+    }
+    
+    /**
+     * Gets the number of inventory rows in the Chest inventory. 
+     * This does not include the PLAYERINVROWS rows in the player inventory.
+     * @return the number of inventory rows
+     */
+    
+    public int getSlotRowCount() {
+        int size = handler.slots.size() - PLAYERSLOTS;
+        int cols =  size / getSlotColumnCount();
+        return (ConfigurationHandler.allowExtraLargeChests() ? cols : Math.max(cols, PLAYERINVCOLS));
+    }
+    
+    public int getSlotColumnCount() {
+        int size = handler.slots.size() - PLAYERSLOTS;
+        if (ConfigurationHandler.allowExtraLargeChests() 
+        && handler.getClass().getSimpleName().equals("ReinforcedStorageScreenHandler")) {
+            return (size <= 81 ? 9 : size / 9);
+        }
+        return PLAYERINVCOLS;
     }
 }
