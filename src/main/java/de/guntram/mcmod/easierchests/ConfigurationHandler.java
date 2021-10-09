@@ -20,7 +20,7 @@ public class ConfigurationHandler implements ModConfigurationHandler {
     private boolean extraLargeChests;
     private boolean halfSizeButtons;
     private boolean toneDownButtons;
-    private boolean enableSearch;
+    private boolean enableSearch, enableRowButtons, enableColumnButtons;
     private String matchHighlightColor;
 
     public void load(final File configFile) {
@@ -48,6 +48,8 @@ public class ConfigurationHandler implements ModConfigurationHandler {
         halfSizeButtons=config.getBoolean("easierchests.config.halfsize", Configuration.CATEGORY_CLIENT, false, "easierchests.config.tt.halfsize");
         toneDownButtons=config.getBoolean("easierchests.config.transparent", Configuration.CATEGORY_CLIENT, true, "easierchests.config.tt.transparent");
         enableSearch=config.getBoolean("easierchests.config.enablesearch", Configuration.CATEGORY_CLIENT, true, "easierchests.config.tt.enablesearch");
+        enableRowButtons=config.getBoolean("easierchests.config.enablerowbuttons", Configuration.CATEGORY_CLIENT, true, "easierchests.config.tt.enablerowbuttons");
+        enableColumnButtons=config.getBoolean("easierchests.config.enablecolumnbuttons", Configuration.CATEGORY_CLIENT, true, "easierchests.config.tt.enablecolumnbuttons");
         matchHighlightColor=config.getString("easierchests.config.highlight", Configuration.CATEGORY_CLIENT, "4000ff00", "easierchests.config.tt.highlight");
         
         if (config.hasChanged())
@@ -79,6 +81,14 @@ public class ConfigurationHandler implements ModConfigurationHandler {
         return getInstance().enableSearch;
     }
     
+    public static boolean enableColumnButtons() {
+        return getInstance().enableColumnButtons;
+    }
+
+    public static boolean enableRowButtons() {
+        return getInstance().enableRowButtons;
+    }
+
     public static void toggleSearchBox() {
         getInstance().enableSearch = !getInstance().enableSearch;
     }
