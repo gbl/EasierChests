@@ -34,6 +34,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import de.guntram.mcmod.easierchests.storagemodapi.ChestGuiInfo;
 
 @Mixin(HandledScreen.class)
 public abstract class AbstractContainerScreenMixin extends Screen implements SlotClicker {
@@ -364,6 +365,7 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
         return super.charTyped(chr, keyCode);
     }
     
+    private boolean loggedScreenHandlerClass = false;
     public boolean isSupportedScreenHandler(ScreenHandler handler) {
         if (handler == null) {      // can this happen? Make IDE happy
             return false;
@@ -372,16 +374,15 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
         if (handler instanceof GenericContainerScreenHandler || handler instanceof ShulkerBoxScreenHandler) {
             return true;
         }
-        // Can't use this because we have no dev jar so superclasses of BackpackScreenHandler are class_xxxx ...
-        // return handler instanceof BackpackScreenHandler;
-        if (handler.getClass().getSimpleName().equals("BackpackScreenHandler")) {
-            return true;
-        }
-        if (handler.getClass().getSimpleName().equals("ReinforcedStorageScreenHandler")) {
+        
+        if (EasierChests.getHelperForHandler(handler) != null) {
             return true;
         }
         
-        LogManager.getLogger(this.getClass()).debug("opening class "+handler.getClass().getSimpleName() + "/" + handler.getClass().getCanonicalName());
+        if (!loggedScreenHandlerClass && !handler.getClass().getSimpleName().startsWith("class_")) {    // don't log MC internal classes
+            LogManager.getLogger(this.getClass()).info("opening class "+handler.getClass().getSimpleName() + "/" + handler.getClass().getCanonicalName());
+            loggedScreenHandlerClass = true;
+        }
         return false;
     }
     
@@ -393,15 +394,30 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
     
     public int getSlotRowCount() {
         int size = handler.slots.size() - PLAYERSLOTS;
-        int cols =  size / getSlotColumnCount();
-        return (ConfigurationHandler.allowExtraLargeChests() ? cols : Math.max(cols, PLAYERINVCOLS));
+        if (ConfigurationHandler.allowExtraLargeChests()) {
+            ChestGuiInfo helper = EasierChests.getHelperForHandler(handler);
+            if (helper != null) {
+                int cols = helper.getRows(handler);
+                if (cols != -1) {
+                    return cols;
+                }
+            }
+            return size / getSlotColumnCount();
+        }
+        return Math.max(6, size/PLAYERINVCOLS);
     }
     
     public int getSlotColumnCount() {
         int size = handler.slots.size() - PLAYERSLOTS;
-        if (ConfigurationHandler.allowExtraLargeChests() 
-        && handler.getClass().getSimpleName().equals("ReinforcedStorageScreenHandler")) {
-            return (size <= 81 ? 9 : size / 9);
+        if (ConfigurationHandler.allowExtraLargeChests()) {
+            ChestGuiInfo helper = EasierChests.getHelperForHandler(handler);
+            if (helper != null) {
+                int rows = helper.getColumns(handler);
+                if (rows != -1) {
+                    return rows;
+                }
+            }
+            return (size <= 81 ? PLAYERINVCOLS : size/PLAYERINVCOLS);
         }
         return PLAYERINVCOLS;
     }
