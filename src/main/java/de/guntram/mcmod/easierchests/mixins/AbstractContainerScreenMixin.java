@@ -110,11 +110,13 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
             RenderSystem.setShaderTexture(0, ExtendedGuiChest.ICONS);
             
             if (ConfigurationHandler.enableColumnButtons()) {
+                int startx = (x + backgroundWidth/2) - (18/2) * cols;
                 for (int i=0; i<cols; i++) {
-                    ExtendedGuiChest.drawTexturedModalRectWithMouseHighlight(hScreen, stack, x+7+i*18, y+-18,            1*18, 2*18, 18, 18, mouseX, mouseY);       // arrow down above chests
-                    if (i<PLAYERINVCOLS) {
-                        ExtendedGuiChest.drawTexturedModalRectWithMouseHighlight(hScreen, stack, x+7+i*18, y+40+(rows+4)*18, 9*18, 2*18, 18, 18, mouseX, mouseY);       // arrow up below player inv
-                    }
+                    ExtendedGuiChest.drawTexturedModalRectWithMouseHighlight(hScreen, stack, startx+i*18, y+-18,            1*18, 2*18, 18, 18, mouseX, mouseY);       // arrow down above chests
+                }
+                startx = (x + backgroundWidth/2) - 9*PLAYERINVCOLS;
+                for (int i=0; i<PLAYERINVCOLS; i++) {
+                    ExtendedGuiChest.drawTexturedModalRectWithMouseHighlight(hScreen, stack, startx+i*18, y+40+(rows+4)*18, 9*18, 2*18, 18, 18, mouseX, mouseY);       // arrow up below player inv
                 }
             }
             
@@ -235,16 +237,21 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
                 return true;
             }
         } 
-        if (ConfigurationHandler.enableColumnButtons() && mouseX>x+7 && mouseX<x+7+cols*18) { // top/bottom buttons
+        if (ConfigurationHandler.enableColumnButtons() && mouseX>x+7 && mouseX<x+backgroundWidth) { // top/bottom buttons
             boolean isChest;
             int column;
             if (mouseY>y-18 && mouseY<y) {                                      // top -> down
+                int startx = x + backgroundWidth / 2 - (18/2) * cols;
                 isChest=true;
-                column=((int)mouseX-x-7)/18;
+                column=((int)mouseX-startx)/18;
+                if (column < 0 || column >= cols) {
+                    return false;
+                }
             } else if (mouseY>y+40+(rows+PLAYERINVROWS)*18 && mouseY<y+40+(rows+PLAYERINVROWS)*18+18) {
+                int startx = x + backgroundWidth / 2 - (18/2) * PLAYERINVCOLS;
                 isChest=false;
-                column=((int)mouseX-x-7)/18;
-                if (column > PLAYERINVCOLS) {
+                column=((int)mouseX-startx)/18;
+                if (column < 0 || column > PLAYERINVCOLS) {
                     return false;
                 }
             } else {
