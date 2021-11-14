@@ -411,7 +411,7 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
             }
             return size / getSlotColumnCount();
         }
-        return Math.max(6, size/PLAYERINVCOLS);
+        return Math.min(6, size/PLAYERINVCOLS);
     }
     
     public int getSlotColumnCount() {
