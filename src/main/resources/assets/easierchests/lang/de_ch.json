@@ -1,0 +1,22 @@
+{
+    "key.categories.easierchests": "EasierChests",
+    "easierchests.sortchest": "Kiste sortieren",
+    "easierchests.sortplayer": "Inventar sortieren",
+    "easierchests.matchdown": "Treffer zum Spieler verschieben",
+    "easierchests.matchup": "Treffer zur Truhe verschieben",
+    "key.easierchests.sortchest": "Kiste sortieren",
+    "key.easierchests.sortplayer": "Inventar sortieren",
+    "key.easierchests.matchdown": "Treffer zum Spieler verschieben",
+    "key.easierchests.matchup": "Treffer zur Truhe verschieben",
+    "key.easierchests.searchbox": "Suchfeld ein-/ausblenden",
+    "easierchests.config.largechests": "Erlaube extra große Truhen",
+    "easierchests.config.halfsize": "Halbe Größe der Schaltflächen",
+    "easierchests.config.transparent": "Transparente Schaltflächen",
+    "easierchests.config.highlight": "Hervorhebungsfarbe (ARGB)",
+    "easierchests.config.enablesearch": "Suchfeld aktivieren",
+    "easierchests.config.tt.largechests": "Erlaube Truhen über 54 Einträge",
+    "easierchests.config.tt.halfsize": "Halbe Schaltflächengröße solange die Maus nicht darüber schwebt",
+    "easierchests.config.tt.transparent": "Schaltflächen transparent machen solange die Maus nicht darüber schwebt",
+    "easierchests.config.tt.highlight": "Hex-Farben, je 2 Byte: Transparenz, rot, grün, blau",
+    "easierchests.config.tt.enablesearch": "Suchfeld für die Gegenstandsuche aktivieren"
+}
