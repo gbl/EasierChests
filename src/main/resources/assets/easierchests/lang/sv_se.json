@@ -14,9 +14,13 @@
     "easierchests.config.transparent": "Transparenta knappar",
     "easierchests.config.highlight": "Markeringsfärg (ARGB)",
     "easierchests.config.enablesearch": "Aktivera sökrutan",
+    "easierchests.config.enablecolumnbuttons": "Enable column arrows",
+    "easierchests.config.enablerowbuttons": "Enable row arrows",
     "easierchests.config.tt.largechests": "Tillåt kistor att ha mer än 54 föremål",
     "easierchests.config.tt.halfsize": "Halvknappsstorlek om inte musen svävar över den",
     "easierchests.config.tt.transparent": "Gör knappar transparenta om inte musen svävar över dem",
     "easierchests.config.tt.highlight": "Hex-färger, 2 byte var: transparens, röd, grön, blå",
-    "easierchests.config.tt.enablesearch": "Låt sökrutan hitta föremål efter namn"
+    "easierchests.config.tt.enablesearch": "Låt sökrutan hitta föremål efter namn",
+    "easierchests.config.tt.enablecolumnbuttons": "Enable the arrows above and below chest/inventory",
+    "easierchests.config.tt.enablerowbuttons": "Enable the arrows left of the chest/inventory"
 }

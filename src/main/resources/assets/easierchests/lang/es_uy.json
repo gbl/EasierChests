@@ -14,9 +14,13 @@
     "easierchests.config.transparent": "Botones transparentes",
     "easierchests.config.highlight": "Color de resaltado (ARGB)",
     "easierchests.config.enablesearch": "Habilitar cuadro de búsqueda",
+    "easierchests.config.enablecolumnbuttons": "Enable column arrows",
+    "easierchests.config.enablerowbuttons": "Enable row arrows",
     "easierchests.config.tt.largechests": "Admitir que los cofres tengan más de 54 espacios",
     "easierchests.config.tt.halfsize": "Tamaño del botón del medio a menos que el mouse esté encima de él",
     "easierchests.config.tt.transparent": "Hacer transparentes los botones a menos que el mouse esté encima de ellos",
     "easierchests.config.tt.highlight": "Colores Hex, 2 bytes cada uno: transparencia, rojo, verde, azul",
-    "easierchests.config.tt.enablesearch": "Habilitar el cuadro de búsqueda para encontrar artículos por nombre"
+    "easierchests.config.tt.enablesearch": "Habilitar el cuadro de búsqueda para encontrar artículos por nombre",
+    "easierchests.config.tt.enablecolumnbuttons": "Enable the arrows above and below chest/inventory",
+    "easierchests.config.tt.enablerowbuttons": "Enable the arrows left of the chest/inventory"
 }

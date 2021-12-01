@@ -14,9 +14,13 @@
     "easierchests.config.transparent": "Pulsanti trapsarenti",
     "easierchests.config.highlight": "Colore di evidenziazione (ARGB)",
     "easierchests.config.enablesearch": "Abilita casella di ricerca",
+    "easierchests.config.enablecolumnbuttons": "Enable column arrows",
+    "easierchests.config.enablerowbuttons": "Enable row arrows",
     "easierchests.config.tt.largechests": "Consenti alle casse di avere più di 54 spazi",
     "easierchests.config.tt.halfsize": "Dimensione pulsanti dimezzata a meno che non ci passi sopra con il mouse",
     "easierchests.config.tt.transparent": "Pulsanti trasparenti a meno che non ci passa sopra il mouse",
     "easierchests.config.tt.highlight": "Colori esadecimali, 2 byte ciascuno: trasparenza, rosso, verde, blu",
-    "easierchests.config.tt.enablesearch": "Abilita la casella di ricerca per trovare gli oggetti per nome"
+    "easierchests.config.tt.enablesearch": "Abilita la casella di ricerca per trovare gli oggetti per nome",
+    "easierchests.config.tt.enablecolumnbuttons": "Enable the arrows above and below chest/inventory",
+    "easierchests.config.tt.enablerowbuttons": "Enable the arrows left of the chest/inventory"
 }

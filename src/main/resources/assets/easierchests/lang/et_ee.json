@@ -14,9 +14,13 @@
     "easierchests.config.transparent": "Läbipaistvad nupud",
     "easierchests.config.highlight": "Esiletõstu värv (ARGB)",
     "easierchests.config.enablesearch": "Luba otsingukast",
+    "easierchests.config.enablecolumnbuttons": "Enable column arrows",
+    "easierchests.config.enablerowbuttons": "Enable row arrows",
     "easierchests.config.tt.largechests": "Luba kirstudes rohkem kui 54 üksust",
     "easierchests.config.tt.halfsize": "Poolik nupusuurus, v.a. siis, kui hiirega minna üle nupu",
     "easierchests.config.tt.transparent": "Tee nupud läbipaistvaks, kuni hiir nendest üle läheb",
     "easierchests.config.tt.highlight": "16-kümn. värvid, igaüks 2 baiti: läbipaistvus, punane, roheline, sinine",
-    "easierchests.config.tt.enablesearch": "Luba otsingukast, et leida esemeid nime järgi"
+    "easierchests.config.tt.enablesearch": "Luba otsingukast, et leida esemeid nime järgi",
+    "easierchests.config.tt.enablecolumnbuttons": "Enable the arrows above and below chest/inventory",
+    "easierchests.config.tt.enablerowbuttons": "Enable the arrows left of the chest/inventory"
 }

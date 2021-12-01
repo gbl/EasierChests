@@ -14,9 +14,13 @@
     "easierchests.config.transparent": "Boutons transparents",
     "easierchests.config.highlight": "Couleur de surlignage (ARGB)",
     "easierchests.config.enablesearch": "Activer la recherche",
+    "easierchests.config.enablecolumnbuttons": "Enable column arrows",
+    "easierchests.config.enablerowbuttons": "Enable row arrows",
     "easierchests.config.tt.largechests": "Permettre aux coffres d'avoir plus de 54 entrées",
     "easierchests.config.tt.halfsize": "Boutons de demi-taille, sauf si la souris passe dessus",
     "easierchests.config.tt.transparent": "Boutons transparents, sauf si la souris passe dessus",
     "easierchests.config.tt.highlight": "Couleurs hexa, 2 octets chacun: transparence, rouge, vert, bleu",
-    "easierchests.config.tt.enablesearch": "Activer la boîte de recherche pour trouver des éléments par nom"
+    "easierchests.config.tt.enablesearch": "Activer la boîte de recherche pour trouver des éléments par nom",
+    "easierchests.config.tt.enablecolumnbuttons": "Enable the arrows above and below chest/inventory",
+    "easierchests.config.tt.enablerowbuttons": "Enable the arrows left of the chest/inventory"
 }

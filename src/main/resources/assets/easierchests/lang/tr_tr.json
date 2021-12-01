@@ -14,9 +14,13 @@
     "easierchests.config.transparent": "Görünmez tuşlar",
     "easierchests.config.highlight": "Vurgu rengi (ARGB)",
     "easierchests.config.enablesearch": "Arama kutucuğunu etkinleştir",
+    "easierchests.config.enablecolumnbuttons": "Enable column arrows",
+    "easierchests.config.enablerowbuttons": "Enable row arrows",
     "easierchests.config.tt.largechests": "54 girdiden fazlasına sahip sandıklara izin ver",
     "easierchests.config.tt.halfsize": "Fare imleciyle üzerine gelinmediği sürece yarı tuş boyutu",
     "easierchests.config.tt.transparent": "Fare imleciyle üzerine gelinmediği sürece tuşları görünmez yap",
     "easierchests.config.tt.highlight": "Hex renkleri, her biri 2 bayt: görünmezlik, kırmızı, yeşil, mavi",
-    "easierchests.config.tt.enablesearch": "Eşyaları ismiyle bulmak için arama kutucuğunu etkinleştir"
+    "easierchests.config.tt.enablesearch": "Eşyaları ismiyle bulmak için arama kutucuğunu etkinleştir",
+    "easierchests.config.tt.enablecolumnbuttons": "Enable the arrows above and below chest/inventory",
+    "easierchests.config.tt.enablerowbuttons": "Enable the arrows left of the chest/inventory"
 }

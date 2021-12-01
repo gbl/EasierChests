@@ -14,9 +14,13 @@
     "easierchests.config.transparent": "Прозрачные кнопки",
     "easierchests.config.highlight": "Цвет подсветки (ARGB)",
     "easierchests.config.enablesearch": "Включить строку поиска",
+    "easierchests.config.enablecolumnbuttons": "Enable column arrows",
+    "easierchests.config.enablerowbuttons": "Enable row arrows",
     "easierchests.config.tt.largechests": "Позволяет сундукам иметь более 54 слотов",
     "easierchests.config.tt.halfsize": "Кнопки вдвое меньше до наведения курсора",
     "easierchests.config.tt.transparent": "Кнопки будут прозрачными до наведения курсора",
     "easierchests.config.tt.highlight": "16-ричные цвета по 2 байта: альфа-канал, красный, зелёный, синий",
-    "easierchests.config.tt.enablesearch": "Строка поиска для нахождения предметов по названию"
+    "easierchests.config.tt.enablesearch": "Строка поиска для нахождения предметов по названию",
+    "easierchests.config.tt.enablecolumnbuttons": "Enable the arrows above and below chest/inventory",
+    "easierchests.config.tt.enablerowbuttons": "Enable the arrows left of the chest/inventory"
 }

@@ -14,9 +14,13 @@
     "easierchests.config.transparent": "Transparente Schaltflächen",
     "easierchests.config.highlight": "Hervorhebungsfarbe (ARGB)",
     "easierchests.config.enablesearch": "Suchfeld aktivieren",
+    "easierchests.config.enablecolumnbuttons": "Spaltenpfeile aktivieren",
+    "easierchests.config.enablerowbuttons": "Zeilenpfeile aktivieren",
     "easierchests.config.tt.largechests": "Erlaube Truhen über 54 Einträge",
     "easierchests.config.tt.halfsize": "Halbe Schaltflächengröße solange die Maus nicht darüber schwebt",
     "easierchests.config.tt.transparent": "Schaltflächen transparent machen solange die Maus nicht darüber schwebt",
     "easierchests.config.tt.highlight": "Hex-Farben, je 2 Byte: Transparenz, rot, grün, blau",
-    "easierchests.config.tt.enablesearch": "Suchfeld für die Gegenstandsuche aktivieren"
+    "easierchests.config.tt.enablesearch": "Suchfeld für die Gegenstandsuche aktivieren",
+    "easierchests.config.tt.enablecolumnbuttons": "Pfeile über und unter Truhe/Inventar aktivieren",
+    "easierchests.config.tt.enablerowbuttons": "Pfeile links von Truhe/Inventar aktivieren"
 }
