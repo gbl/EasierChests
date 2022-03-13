@@ -14,13 +14,13 @@
     "easierchests.config.transparent": "Průhledná tlačítka",
     "easierchests.config.highlight": "Barva zvýraznění (ARGB)",
     "easierchests.config.enablesearch": "Povolit vyhledávací pole",
-    "easierchests.config.enablecolumnbuttons": "Enable column arrows",
-    "easierchests.config.enablerowbuttons": "Enable row arrows",
+    "easierchests.config.enablecolumnbuttons": "Povolit šipky sloupce",
+    "easierchests.config.enablerowbuttons": "Povolit šipky řádku",
     "easierchests.config.tt.largechests": "Povolit truhly s více než 54 položkami",
     "easierchests.config.tt.halfsize": "Poloviční velikost tlačítka při přejíždění myší nad ním",
     "easierchests.config.tt.transparent": "Průhledné tlačítko při přejíždění myší nad ním",
     "easierchests.config.tt.highlight": "Hex barvy, každý 2 bajty: průhlednost, červená, zelená, modrá",
     "easierchests.config.tt.enablesearch": "Povolit vyhledávací pole pro nalezení položek podle názvu",
-    "easierchests.config.tt.enablecolumnbuttons": "Enable the arrows above and below chest/inventory",
-    "easierchests.config.tt.enablerowbuttons": "Enable the arrows left of the chest/inventory"
+    "easierchests.config.tt.enablecolumnbuttons": "Povolit šipky nad a pod truhlou/inventářem",
+    "easierchests.config.tt.enablerowbuttons": "Povolit šipky vlevo od truhly/inventáře"
 }

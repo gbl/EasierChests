@@ -14,13 +14,13 @@
     "easierchests.config.transparent": "透明按钮",
     "easierchests.config.highlight": "高亮色 (ARGB)",
     "easierchests.config.enablesearch": "启用搜索框",
-    "easierchests.config.enablecolumnbuttons": "Enable column arrows",
-    "easierchests.config.enablerowbuttons": "Enable row arrows",
+    "easierchests.config.enablecolumnbuttons": "启用列箭头",
+    "easierchests.config.enablerowbuttons": "启用列箭头",
     "easierchests.config.tt.largechests": "允许箱子储存超过 54 种物品",
     "easierchests.config.tt.halfsize": "鼠标不悬停时按钮均为半个大小",
     "easierchests.config.tt.transparent": "鼠标不悬停时按钮均为透明",
     "easierchests.config.tt.highlight": "十六进制颜色，每部份占 2 字节：透明度、红、绿、蓝",
     "easierchests.config.tt.enablesearch": "启用输入框的名称搜索功能",
-    "easierchests.config.tt.enablecolumnbuttons": "Enable the arrows above and below chest/inventory",
-    "easierchests.config.tt.enablerowbuttons": "Enable the arrows left of the chest/inventory"
+    "easierchests.config.tt.enablecolumnbuttons": "启用上下方按钮（整列移动）",
+    "easierchests.config.tt.enablerowbuttons": "启用左侧按钮（整行移动）"
 }
