@@ -24,7 +24,6 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ShulkerBoxScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.text.LiteralText;
 import org.apache.logging.log4j.LogManager;
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Final;
@@ -35,6 +34,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import de.guntram.mcmod.easierchests.storagemodapi.ChestGuiInfo;
+import net.minecraft.text.Text;
 
 @Mixin(HandledScreen.class)
 public abstract class AbstractContainerScreenMixin extends Screen implements SlotClicker {
@@ -95,8 +95,8 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
             this.textRenderer.draw(stack, Integer.toString(slot.id), slot.x, slot.y, 0x808090);
         }
     }
-    
-    @Inject(method="render", at=@At(value="INVOKE", target="Lcom/mojang/blaze3d/systems/RenderSystem;disableDepthTest()V"))
+
+    @Inject(method="render", at=@At(value="INVOKE", target="Lcom/mojang/blaze3d/systems/RenderSystem;disableDepthTest()V", remap = false))
     public void EasierChests$renderSpecialButtons(MatrixStack stack, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         HandledScreen hScreen = (HandledScreen) (Object) this;
         
@@ -140,7 +140,7 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
             
             if (ConfigurationHandler.enableSearch()) {
                 if (searchWidget == null) {
-                    searchWidget = new TextFieldWidget(textRenderer, x+backgroundWidth-85, y+3, 80, 12, new LiteralText("Search"));
+                    searchWidget = new TextFieldWidget(textRenderer, x+backgroundWidth-85, y+3, 80, 12, Text.literal("Search"));
                 } else {
                     searchWidget.x = x+backgroundWidth-85;
                     searchWidget.y = y+3;

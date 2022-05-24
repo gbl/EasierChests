@@ -1,5 +1,5 @@
 {
-    "key.categories.easierchests": "Baús Fáceis",
+    "key.categories.easierchests": "EasierChests",
     "easierchests.sortchest": "Ordenar baú",
     "easierchests.sortplayer": "Ordenar inventário",
     "easierchests.matchdown": "Mover item para o player",
@@ -17,8 +17,8 @@
     "easierchests.config.enablecolumnbuttons": "Habilitar setas de coluna",
     "easierchests.config.enablerowbuttons": "Habilitar setas de linha",
     "easierchests.config.tt.largechests": "Permitir baús que tenham mais de 54 entradas",
-    "easierchests.config.tt.halfsize": "Half button size unless mouse hovers over them",
-    "easierchests.config.tt.transparent": "Make buttons transparent unless mouse hovers over them",
+    "easierchests.config.tt.halfsize": "Diminuir tamanho do botão, a menos que o mouse passe sobre eles",
+    "easierchests.config.tt.transparent": "Tornar os botões transparentes, a menos que o mouse passe sobre eles",
     "easierchests.config.tt.highlight": "Cores decimais: Transparência, Vermelho, Verde, Azul",
     "easierchests.config.tt.enablesearch": "Habilitar caixa de busca para procurar itens por nome",
     "easierchests.config.tt.enablecolumnbuttons": "Ative as setas acima e abaixo do baú/inventário",

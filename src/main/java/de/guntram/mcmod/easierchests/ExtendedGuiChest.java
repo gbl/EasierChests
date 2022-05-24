@@ -17,7 +17,6 @@ import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.ShulkerBoxScreenHandler;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 /*
@@ -90,25 +89,25 @@ public class ExtendedGuiChest extends HandledScreen
     public static void drawChestInventoryBroom(MatrixStack stack, HandledScreen screen, int x, int y, int mouseX, int mouseY) {
         RenderSystem.setShaderTexture(0, ICONS);
         drawTexturedModalRectWithMouseHighlight(screen, stack, x, y, 11*18, 0*18, 18, 18, mouseX, mouseY);
-        myTooltip(screen, stack, x, y,  18, 18, mouseX, mouseY, new TranslatableText("easierchests.sortchest"));
+        myTooltip(screen, stack, x, y,  18, 18, mouseX, mouseY, Text.translatable("easierchests.sortchest"));
     }
     
     public static void drawChestInventoryAllDown(MatrixStack stack, HandledScreen screen, int x, int y, int mouseX, int mouseY) {
         RenderSystem.setShaderTexture(0, ICONS);
         drawTexturedModalRectWithMouseHighlight(screen, stack, x, y, 0 *18, 2*18, 18, 18, mouseX, mouseY);
-        myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, new TranslatableText("easierchests.matchdown"));
+        myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, Text.translatable("easierchests.matchdown"));
     }
 
     public static void drawPlayerInventoryBroom(MatrixStack stack, HandledScreen screen, int x, int y, int mouseX, int mouseY) {
         RenderSystem.setShaderTexture(0, ICONS);
         drawTexturedModalRectWithMouseHighlight(screen, stack, x, y, 11*18, 0*18, 18, 18, mouseX, mouseY);
-        myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, new TranslatableText("easierchests.sortplayer"));
+        myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, Text.translatable("easierchests.sortplayer"));
     }
     
     public static void drawPlayerInventoryAllUp(MatrixStack stack, HandledScreen screen, int x, int y, int mouseX, int mouseY) {
         RenderSystem.setShaderTexture(0, ICONS);
         drawTexturedModalRectWithMouseHighlight(screen, stack, x, y,  8*18, 2*18, 18, 18, mouseX, mouseY);
-        myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, new TranslatableText("easierchests.matchup"));
+        myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, Text.translatable("easierchests.matchup"));
     }
 
     public static void drawTexturedModalRectWithMouseHighlight(HandledScreen screen, MatrixStack stack, int screenx, int screeny, int textx, int texty, int sizex, int sizey, int mousex, int mousey) {
