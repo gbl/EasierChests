@@ -142,8 +142,8 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
                 if (searchWidget == null) {
                     searchWidget = new TextFieldWidget(textRenderer, x+backgroundWidth-85, y+3, 80, 12, Text.literal("Search"));
                 } else {
-                    searchWidget.x = x+backgroundWidth-85;
-                    searchWidget.y = y+3;
+                    searchWidget.setX(x+backgroundWidth-85);
+                    searchWidget.setY(y+3);
                 }
                 searchWidget.render(stack, mouseX, mouseY, delta);
                 
