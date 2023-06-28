@@ -9,7 +9,7 @@ public class MMConfigurationHandler implements ModMenuApi
 {
     @Override
     public ConfigScreenFactory getModConfigScreenFactory() {
-        return screen -> new GuiModOptions(screen, EasierChests.MODNAME, ConfigurationProvider.getHandler(EasierChests.MODNAME));
+        return screen -> GuiModOptions.getGuiModOptions(screen, EasierChests.MODNAME, ConfigurationProvider.getHandler(EasierChests.MODNAME));
     }
 
 }

@@ -8,14 +8,15 @@ import de.guntram.mcmod.easierchests.ExtendedGuiChest;
 import de.guntram.mcmod.easierchests.FrozenSlotDatabase;
 import de.guntram.mcmod.easierchests.interfaces.SlotClicker;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+
+import static de.guntram.mcmod.easierchests.ExtendedGuiChest.ICONS;
 import static net.minecraft.client.gui.screen.Screen.hasAltDown;
 import static net.minecraft.client.gui.screen.Screen.hasShiftDown;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.screen.GenericContainerScreenHandler;
@@ -46,7 +47,7 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
     private static TextFieldWidget searchWidget;
     
     @Shadow protected void onMouseClick(Slot slot, int invSlot, int button, SlotActionType slotActionType) {}
-    @Shadow protected void drawMouseoverTooltip(MatrixStack matrices, int x, int y) {}
+    @Shadow protected void drawMouseoverTooltip(DrawContext context, int x, int y) {}
     @Shadow protected boolean isPointWithinBounds(int x, int y, int w, int h, double pX, double pY) {return true;}
     @Shadow @Final protected ScreenHandler handler;
     @Shadow protected int x, y, backgroundWidth, backgroundHeight;
@@ -90,51 +91,51 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
     }
     
     @Inject(method="drawSlot", at=@At("RETURN"))
-    public void EasierChests$DrawSlotIndex(MatrixStack stack, Slot slot, CallbackInfo ci) {
+    public void EasierChests$DrawSlotIndex(DrawContext context, Slot slot, CallbackInfo ci) {
         if (hasAltDown()) {
-            this.textRenderer.draw(stack, Integer.toString(slot.id), slot.x, slot.y, 0x808090);
+            context.drawText(this.textRenderer, Integer.toString(slot.id), slot.x, slot.y, 0x808090, false);
         }
     }
 
     @Inject(method="render", at=@At(value="INVOKE", target="Lcom/mojang/blaze3d/systems/RenderSystem;disableDepthTest()V", remap = false))
-    public void EasierChests$renderSpecialButtons(MatrixStack stack, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    public void EasierChests$renderSpecialButtons(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         HandledScreen hScreen = (HandledScreen) (Object) this;
         
-        ExtendedGuiChest.drawPlayerInventoryBroom(stack, hScreen, x+backgroundWidth, y+backgroundHeight-30-3*18, mouseX, mouseY);
+        ExtendedGuiChest.drawPlayerInventoryBroom(context, hScreen, x+backgroundWidth, y+backgroundHeight-30-3*18, mouseX, mouseY);
         if (isSupportedScreenHandler(handler)) {
             
             int cols = getSlotColumnCount();
             int rows = getSlotRowCount();
 
             GlStateManager._enableBlend();
-            RenderSystem.setShaderTexture(0, ExtendedGuiChest.ICONS);
+            // RenderSystem.setShaderTexture(0, ICONS);
             
             if (ConfigurationHandler.enableColumnButtons()) {
                 int startx = (x + backgroundWidth/2) - (18/2) * cols;
                 for (int i=0; i<cols; i++) {
-                    ExtendedGuiChest.drawTexturedModalRectWithMouseHighlight(hScreen, stack, startx+i*18, y+-18,            1*18, 2*18, 18, 18, mouseX, mouseY);       // arrow down above chests
+                    ExtendedGuiChest.drawTexturedModalRectWithMouseHighlight(hScreen, context, startx+i*18, y+-18,            1*18, 2*18, 18, 18, mouseX, mouseY);       // arrow down above chests
                 }
                 startx = (x + backgroundWidth/2) - 9*PLAYERINVCOLS;
                 for (int i=0; i<PLAYERINVCOLS; i++) {
-                    ExtendedGuiChest.drawTexturedModalRectWithMouseHighlight(hScreen, stack, startx+i*18, y+40+(rows+4)*18, 9*18, 2*18, 18, 18, mouseX, mouseY);       // arrow up below player inv
+                    ExtendedGuiChest.drawTexturedModalRectWithMouseHighlight(hScreen, context, startx+i*18, y+40+(rows+4)*18, 9*18, 2*18, 18, 18, mouseX, mouseY);       // arrow up below player inv
                 }
             }
             
             if (ConfigurationHandler.enableRowButtons()) {
                 for (int i=0; i<rows; i++) {
-                    ExtendedGuiChest.drawTexturedModalRectWithMouseHighlight(hScreen, stack, x+ -18,   y+17+i*18,        1*18, 2*18, 18, 18, mouseX, mouseY);       // arrow down left of chest
+                    ExtendedGuiChest.drawTexturedModalRectWithMouseHighlight(hScreen, context, x+ -18,   y+17+i*18,        1*18, 2*18, 18, 18, mouseX, mouseY);       // arrow down left of chest
                 }
                 for (int i=0; i<PLAYERINVROWS; i++) {
-                    ExtendedGuiChest.drawTexturedModalRectWithMouseHighlight(hScreen, stack, x+ -18,   y+28+(i+rows)*18, 9*18, 2*18, 18, 18, mouseX, mouseY);       // arrow up left of player inv
+                    ExtendedGuiChest.drawTexturedModalRectWithMouseHighlight(hScreen, context, x+ -18,   y+28+(i+rows)*18, 9*18, 2*18, 18, 18, mouseX, mouseY);       // arrow up left of player inv
                 }
             }
             
             GlStateManager._disableBlend();
-            RenderSystem.setShaderTexture(0, ExtendedGuiChest.ICONS);      // because tooltip rendering will have changed the texture to letters
+            // RenderSystem.setShaderTexture(0, ICONS);      // because tooltip rendering will have changed the texture to letters
             for (int i=0; i<PLAYERSLOTS; i++) {
                 if (!hasShiftDown() && FrozenSlotDatabase.isSlotFrozen(i)) {
                     Slot slot = this.handler.slots.get(EasierChests$slotIndexfromPlayerInventoryIndex(i));
-                    this.drawTexture(stack, x+slot.x, y+slot.y, 7*18+1, 3*18+1, 16, 16);               // stop sign
+                    context.drawTexture(ICONS, x+slot.x, y+slot.y, 7*18+1, 3*18+1, 16, 16);               // stop sign
                 }
             }
             
@@ -145,7 +146,7 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
                     searchWidget.setX(x+backgroundWidth-85);
                     searchWidget.setY(y+3);
                 }
-                searchWidget.render(stack, mouseX, mouseY, delta);
+                searchWidget.render(context, mouseX, mouseY, delta);
                 
                 String search = searchWidget.getText().toLowerCase();
                 if (!search.isEmpty()) {
@@ -157,15 +158,15 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
                             continue;
                         }
                         if (I18n.translate(item.getTranslationKey()).toLowerCase().contains(search)) {
-                            DrawableHelper.fill(stack, x+slot.x-1, y+slot.y-1, x+slot.x+18-1, y+slot.y+18-1, highlight);
+                            context.fill(x+slot.x-1, y+slot.y-1, x+slot.x+18-1, y+slot.y+18-1, highlight);
                         }
                     }
                 }
                 
             }
-            ExtendedGuiChest.drawPlayerInventoryAllUp(stack, hScreen, x+backgroundWidth, y+backgroundHeight-30-2*18, mouseX, mouseY);
-            ExtendedGuiChest.drawChestInventoryBroom(stack, hScreen, x+backgroundWidth, y+17, mouseX, mouseY);
-            ExtendedGuiChest.drawChestInventoryAllDown(stack, hScreen, x+this.backgroundWidth, y+17+18, mouseX, mouseY);
+            ExtendedGuiChest.drawPlayerInventoryAllUp(context, hScreen, x+backgroundWidth, y+backgroundHeight-30-2*18, mouseX, mouseY);
+            ExtendedGuiChest.drawChestInventoryBroom(context, hScreen, x+backgroundWidth, y+17, mouseX, mouseY);
+            ExtendedGuiChest.drawChestInventoryAllDown(context, hScreen, x+this.backgroundWidth, y+17+18, mouseX, mouseY);
         }
     }
     
@@ -175,9 +176,12 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
         if (isSupportedScreenHandler(handler)
         && ConfigurationHandler.enableSearch() 
         && searchWidget.mouseClicked(mouseX, mouseY, mouseButton)) {
+            searchWidget.setFocused(true);
             cir.setReturnValue(true);
             cir.cancel();
             return;
+        } else if (searchWidget != null) {
+            searchWidget.setFocused(false);
         }
         
         if (mouseX >= x+backgroundWidth && mouseX <= x+backgroundWidth+18) {
