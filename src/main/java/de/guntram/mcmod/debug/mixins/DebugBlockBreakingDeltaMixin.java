@@ -31,7 +31,7 @@ public class DebugBlockBreakingDeltaMixin {
         float result = player.getBlockBreakingSpeed(state) / f / (float)i;
         int ticksToBreak = (int) Math.ceil(1.0f / result);
         
-        System.out.println("Player "+player.getEntityName()
+        System.out.println("Player "+player.getNameForScoreboard()
                 +" is breaking a block, tool effectivity "+ i
                 +" block breaking speed "+result
                 +" hardness "+f

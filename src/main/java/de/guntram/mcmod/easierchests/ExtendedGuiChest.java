@@ -58,7 +58,7 @@ public class ExtendedGuiChest extends HandledScreen
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float partialTicks)
     {
-        renderBackground(context);
+        renderInGameBackground(context);
         super.render(context, mouseX, mouseY, partialTicks);
         drawMouseoverTooltip(context, mouseX, mouseY);
     }
